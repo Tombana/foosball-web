@@ -10,7 +10,7 @@ To use nginx with sqlite3 on Arch linux:
 
 - Install the required packages
 
-    pacman -S nginx php-fpm php-sqlite
+    `pacman -S nginx php-fpm php-sqlite`
 
 - Uncomment the `extension=pdo_sqlite` line in `/etc/php/php.ini`
 
