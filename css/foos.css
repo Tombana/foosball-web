@@ -1,0 +1,56 @@
+.table-borderless thead tr th,
+.table-borderless thead tr td,
+.table-borderless tbody tr th,
+.table-borderless tbody tr td {
+  border: 0px;
+}
+
+.table-borderless thead tr.active th,
+.table-borderless thead tr.active td,
+.table-borderless tbody tr.active th,
+.table-borderless tbody tr.active td {
+  background-color: #e5e5e5;
+}
+
+.table-super-condensed thead tr th,
+.table-super-condensed thead tr td,
+.table-super-condensed tbody tr th,
+.table-super-condensed tbody tr td {
+  padding: 3px;
+}
+
+.popover {
+  max-width: 100%;
+}
+
+.classification-up {
+  color: #fff;
+  background-color: #3a3;
+}
+.classification-down {
+  color: #fff;
+  background-color: #c44;
+}
+
+.blueteam {
+    color: #337ab7;
+}
+.redteam {
+    color: #d9534f;
+}
+
+.nopad {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.playerselect {
+    border: 2px;
+    width: 90px;
+}
+
+.winteam {
+    font-weight: 700;
+}
+.loseteam {
+}

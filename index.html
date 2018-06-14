@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Foosball tournament</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="css/foos.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>var default_season_id=1;</script>
+</head>
+<body>
+
+<!-- Static navbar -->
+<nav class="navbar navbar-default navbar-static-top">
+<div class="container">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="#">Foosball tournament</a>
+  </div>
+  <div id="navbar" class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span id="season-selected"></span><span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a href="#" class="season-selector" data-season-id="1">Season one</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div><!--/.nav-collapse -->
+</div><!--/.container-fluid -->
+</nav>
+
+<div class="container">
+
+    <div class="col-md-4">
+        <h3>Players in the next match <span class="fa fa-futbol"></span></h3>
+        <div style="overflow-x:auto;">
+        <table class="table">
+            <tr>
+                <th class="text-left"><span class="blueteam">Blue</span></th>
+                <th colspan="3" style="text-align:center"><a class="btn btn-default" role="button" id="swapteams">swap <span class="glyphicon glyphicon-resize-horizontal"></span> teams</a></th>
+                <th class="text-right"><span class="redteam">Red</span></th>
+            </tr>
+            <tr>
+                <td class="text-left nopad"> <select class="playerselect" id="bluedef"><option>loading...</option></select></td>
+                <td class="text-left nopad"> <span class="blueteam glyphicon glyphicon-chevron-left"></span><span class="blueteam fa fa-shield-alt"></span></td>
+                <td rowspan="3" style="text-align:center;padding-left:0px;padding-right:0px;padding-top:20px;"><img style="width:80px;" src="img/foosball_table.png"/></td>
+                <td class="text-right nopad"><span class="redteam fa fa-crosshairs"></span><span class="redteam glyphicon glyphicon-chevron-right"></span></td>
+                <td class="text-right nopad"><select class="playerselect" id="redatk"><option>loading...</option></select></td>
+            </tr>
+            <tr>
+                <td class="text-left"><a class="btn btn-default btn-sm" role="button" id="swapblue"><span class="glyphicon glyphicon-resize-vertical"></span></a></td>
+                <td></td>
+                <td></td>
+                <td class="text-right"><a class="btn btn-default btn-sm" role="button" id="swapred"><span class="glyphicon glyphicon-resize-vertical"></span></a></td>
+            </tr>
+            <tr>
+                <td class="text-left nopad"> <select class="playerselect" id="blueatk"><option>loading...</option></select></td>
+                <td class="text-left nopad"> <span class="blueteam glyphicon glyphicon-chevron-left"></span><span class="blueteam fa fa-crosshairs"></span></td>
+                <td class="text-right nopad"><span class="redteam fa fa-shield-alt"></span><span class="redteam glyphicon glyphicon-chevron-right"></span></td>
+                <td class="text-right nopad"><select class="playerselect" id="reddef"><option>loading...</option></select></td>
+            </tr>
+        </table>
+        </div>
+    </div>
+
+
+    <div class="col-md-12">
+
+        <div class="col-md-5">
+            <h3>Top 10 attackers</h3>
+            Need to play at least 5 matches as attacker to appear.
+            <table class="table table-condensed table-striped" id="bestattackers">
+                <tr>
+                    <th class="col-md-1 text-right">Pos</th>
+                    <th class="col-md-2 text-left">Player</th>
+                    <th class="col-md-1 text-right">Attack Elo</th>
+                    <th class="col-md-1 text-right">Matches played as attacker</th>
+                </tr>
+            </table>
+        </div>
+
+        <div class="col-md-5">
+            <h3>Top 10 defenders</h3>
+            Need to play at least 5 matches as defender to appear.
+            <table class="table table-condensed table-striped" id="bestdefenders">
+                <tr>
+                    <th class="col-md-1 text-right">Pos</th>
+                    <th class="col-md-2 text-left">Player</th>
+                    <th class="col-md-1 text-right">Defense Elo</th>
+                    <th class="col-md-1 text-right">Matches played as defender</th>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+    <div class="col-md-12">
+        <h3>Classification</h3>
+        You are only shown on this page if your most recent match was less than (60 + 2 * #matches) days ago.
+        <div style="overflow-x:auto;">
+            <table class="table table-condensed table-striped" id="classification">
+                <tr>
+                    <th class="col-md-1 text-right">Pos</th>
+                    <th class="col-md-3 text-left">Player</th>
+                    <th class="col-md-2 text-right"># Matches won</th>
+                    <th class="col-md-2 text-right">Attack Elo</th>
+                    <th class="col-md-2 text-right">Defense Elo</th>
+                </tr>
+            </table>
+        </div>
+        <h3>Statistics</h3>
+        <h4><span class="blueteam" id="bluewins">Blue wins: </span></h4>
+        <h4><span class="redteam"  id="redwins" >Red wins: </span></h4>
+    </div>
+
+    <div class="col-md-12">
+        <h4>Matches played</h4>
+        Only 50 most recent matches are shown.
+        <div style="overflow-x:auto;">
+            <table class="table table-striped table-condensed" id="matches">
+                <tr>
+                    <th>Time</th>
+                    <th><span class="blueteam">Defense</span></th>
+                    <th><span class="blueteam">Offence</span></th>
+                    <th class="text-center">Score</th>
+                    <th><span class="redteam">Offence</span></th>
+                    <th><span class="redteam">Defense</span></th>
+                    <th class="text-center">Duration</th>
+                    <th class="text-center">Replays</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <p><a href="admin/index.php">admin panel</a></p>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/foos.js"></script>
+
+</body>
+</html>
