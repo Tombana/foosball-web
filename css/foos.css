@@ -39,15 +39,12 @@
     color: #d9534f;
 }
 
-.nopad {
-    padding-left: 0px;
-    padding-right: 0px;
-}
-
+/*
 .playerselect {
     border: 2px;
     width: 90px;
 }
+*/
 
 .winteam {
     font-weight: 700;
