@@ -35,9 +35,8 @@ while($row = $q->fetch(PDO::FETCH_ASSOC)) {
 //$allmatches = $q->fetchAll(PDO::FETCH_ASSOC);
 //fullAnalysis($allmatches, $players, $pdo);
 
-
 // "classification":
-$q = $pdo->query("SELECT * FROM player_ratings ORDER BY player_id DESC");
+$q = $pdo->query("SELECT * FROM player_ratings WHERE active = 1 ORDER BY player_id DESC");
 while($row = $q->fetch(PDO::FETCH_ASSOC)) {
     $players[$row['player_id']]['rating'] = $row;
 }
@@ -45,19 +44,21 @@ while($row = $q->fetch(PDO::FETCH_ASSOC)) {
 $tbl = "";
 foreach($abcPlayerIds as $id) {
     $rating = &$players[$id]['rating'];
-    $tbl .= '<tr>';
-    $tbl .= '<td class="text-left" >'. $players[$id]['name'] . '</td>';
-    $tbl .= '<td class="text-right">'. $rating['matches_won'] . '/' . $rating['num_matches'] . '</td>';
-    $tbl .= '<td class="text-right">'. round($rating['atk_rating']) . '(' . $rating['atk_matches'] . ')</td>';
-    $tbl .= '<td class="text-right">'. round($rating['def_rating']) . '(' . $rating['def_matches'] . ')</td>';
-    $tbl .= '</tr>';
+    if(!empty($rating)) {
+        $tbl .= '<tr>';
+        $tbl .= '<td class="text-left" >'. $players[$id]['name'] . '</td>';
+        $tbl .= '<td class="text-right">'. $rating['matches_won'] . '/' . $rating['num_matches'] . '</td>';
+        $tbl .= '<td class="text-right">'. round($rating['atk_rating']) . '</td><td class="text-left">(' . $rating['atk_matches'] . ')</td>';
+        $tbl .= '<td class="text-right">'. round($rating['def_rating']) . '</td><td class="text-left">(' . $rating['def_matches'] . ')</td>';
+        $tbl .= '</tr>';
+    }
 }
 $result->classification = $tbl;
 
 // "bestattackers":
 $pos = 1;
 $tbl = "";
-$q = $pdo->query("SELECT * FROM player_ratings ORDER BY atk_rating DESC LIMIT 10");
+$q = $pdo->query("SELECT * FROM player_ratings WHERE active = 1 AND atk_matches >= 5 ORDER BY atk_rating DESC LIMIT 10");
 while($row = $q->fetch(PDO::FETCH_ASSOC)) {
     $tbl .= '<tr>';
     $tbl .= '<td class="text-right">'. $pos++ . '</td>';
@@ -71,7 +72,7 @@ $result->bestattackers = $tbl;
 // "bestdefenders":
 $pos = 1;
 $tbl = "";
-$q = $pdo->query("SELECT * FROM player_ratings ORDER BY def_rating DESC LIMIT 10");
+$q = $pdo->query("SELECT * FROM player_ratings WHERE active = 1 AND def_matches >= 5 ORDER BY def_rating DESC LIMIT 10");
 while($row = $q->fetch(PDO::FETCH_ASSOC)) {
     $tbl .= '<tr>';
     $tbl .= '<td class="text-right">'. $pos++ . '</td>';

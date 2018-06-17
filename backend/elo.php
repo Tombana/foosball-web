@@ -91,14 +91,19 @@ function fullAnalysis($allmatches, $playernames, $pdo) {
         ('player_id','atk_rating','def_rating',
         'num_matches', 'matches_won',
         'atk_matches','def_matches',
-        'last_match_date')
+        'active')
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
     if ($stmnt == false) {
         print_r($pdo->errorInfo());
     } else {
+        // date('Y-m-d G:i:s', $p['last_match_date'])
+        $tnow = time();
         foreach($players as $p) {
-            $stmnt->execute(array($p['player_id'], $p['atk_rating'], $p['def_rating'], $p['num_matches'], $p['matches_won'], $p['atk_matches'], $p['def_matches'], date('Y-m-d G:i:s', $p['last_match_date']) ));
+            $active = false;
+            if (($tnow - $p['last_match_date']) <= (60+$p['num_matches'])*(24*60*60) )
+                $active = true;
+            $stmnt->execute(array($p['player_id'], $p['atk_rating'], $p['def_rating'], $p['num_matches'], $p['matches_won'], $p['atk_matches'], $p['def_matches'], $active));
         }
     }
 }
