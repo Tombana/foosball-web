@@ -1,7 +1,8 @@
 function startup() {
 	$(".season-selector").click(select_season);
 
-    $("#swapteams").click(swap_teams);
+    $("#swapteams1").click(swap_teams);
+    $("#swapteams2").click(swap_teams);
     $("#swapblue").click(swap_blue);
     $("#swapred").click(swap_red);
 
