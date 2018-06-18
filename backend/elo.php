@@ -33,6 +33,9 @@ function fullAnalysis($allmatches, $playernames, $pdo) {
         setPlayerDefaults($players[$key]);
     }
 
+    $bluewins = 0;
+    $redwins = 0;
+
     $teams = ['blue', 'red'];
     $roles = ['atk', 'def'];
     //$allpositions = ["bluedef", "blueatk", "redatk", "reddef"];
@@ -62,6 +65,11 @@ function fullAnalysis($allmatches, $playernames, $pdo) {
             }
         }
 
+        if ($match['scoreblue'] > $match['scorered'])
+            $bluewins++;
+        elseif ($match['scoreblue'] < $match['scorered'])
+            $redwins++;
+
         $blueElo = 0.565 * $rating['bluedef_rating'] + 0.435 * $rating['blueatk_rating'];
         $redElo  = 0.565 * $rating['reddef_rating']  + 0.435 * $rating['redatk_rating'];
 
@@ -85,6 +93,18 @@ function fullAnalysis($allmatches, $playernames, $pdo) {
         $players[$match['reddef']]['def_rating']  += $kFactor * $gainRed;
     }
 
+    $affectedrows = $pdo->exec("DELETE FROM match_ratings");
+    $stmnt = $pdo->prepare("INSERT INTO 'match_ratings' ('match_id',
+        'bluedef_rating','bluedef_delta','blueatk_rating','blueatk_delta',
+        'redatk_rating','redatk_delta','reddef_rating','reddef_delta')
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    
+    foreach($match_ratings as $r) {
+        $stmnt->execute(array($r['match_id'],
+            $r['bluedef_rating'],$r['bluedef_delta'],$r['blueatk_rating'],$r['blueatk_delta'],
+            $r['redatk_rating'],$r['redatk_delta'],$r['reddef_rating'],$r['reddef_delta']));
+    }
+
     $affectedrows = $pdo->exec("DELETE FROM player_ratings");
 
     $stmnt = $pdo->prepare("INSERT INTO 'player_ratings'
@@ -106,6 +126,8 @@ function fullAnalysis($allmatches, $playernames, $pdo) {
             $stmnt->execute(array($p['player_id'], $p['atk_rating'], $p['def_rating'], $p['num_matches'], $p['matches_won'], $p['atk_matches'], $p['def_matches'], $active));
         }
     }
+
+    $pdo->exec("REPLACE INTO statistics (key,value) VALUES ('bluewins',{$bluewins}), ('redwins',{$redwins})");
 }
 
 //  # Most recent match should be within 2 months + twice the number of matches in days

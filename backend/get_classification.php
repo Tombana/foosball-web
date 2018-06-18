@@ -14,8 +14,8 @@ $result->season = $season_id;
 $result->classification = "";
 $result->bestattackers = "";
 $result->bestdefenders = "";
-$result->bluewins = 200;
-$result->redwins = 200;
+$result->bluewins = 0;
+$result->redwins = 0;
 $result->playerlist = "";
 $result->playerpositions = [];
 $result->recentmatches = "";
@@ -31,10 +31,20 @@ while($row = $q->fetch(PDO::FETCH_ASSOC)) {
     $result->playerlist .= '<option value="'. $row['id'] . '">' . $row['name'] . '</option>';
 }
 
-//$q = $pdo->query('SELECT * FROM matches ORDER BY id ASC');
-//$allmatches = $q->fetchAll(PDO::FETCH_ASSOC);
-//fullAnalysis($allmatches, $players, $pdo);
+if (!empty($_REQUEST['elo'])) {
+    $q = $pdo->query('SELECT * FROM matches ORDER BY id ASC');
+    $allmatches = $q->fetchAll(PDO::FETCH_ASSOC);
+    fullAnalysis($allmatches, $players, $pdo);
+}
 
+// "bluewins", "redwins"
+$q = $pdo->query("SELECT key,value FROM statistics");
+while($row = $q->fetch(PDO::FETCH_ASSOC)) {
+    if ($row['key'] == "bluewins")
+        $result->bluewins = $row['value'];
+    if ($row['key'] == "redwins")
+        $result->redwins  = $row['value'];
+}
 // "classification":
 $q = $pdo->query("SELECT * FROM player_ratings WHERE active = 1 ORDER BY player_id DESC");
 while($row = $q->fetch(PDO::FETCH_ASSOC)) {
@@ -83,13 +93,25 @@ while($row = $q->fetch(PDO::FETCH_ASSOC)) {
 }
 $result->bestdefenders = $tbl;
 
+// "playerpositions"
 $q = $pdo->query("SELECT position,player_id FROM playerpositions");
 while($row = $q->fetch(PDO::FETCH_ASSOC)) {
     $result->playerpositions[$row['position']] = $row['player_id'];
 }
 
 // "recentmatches":
-$q = $pdo->query('SELECT * FROM matches ORDER BY id DESC LIMIT 50');
+$q = $pdo->query('SELECT bluedef,blueatk,redatk,reddef,scoreblue,scorered,time,duration,
+    bluedef_rating,bluedef_delta,blueatk_rating,blueatk_delta,
+    redatk_rating,redatk_delta,reddef_rating,reddef_delta
+    FROM matches INNER JOIN match_ratings ON matches.id = match_ratings.match_id
+    ORDER BY id DESC LIMIT 10');
+
+function printElo($value, $delta) {
+    if ($delta >= 0)
+        return ' (' . round($value) . '+' . round($delta) . ')';
+    else
+        return ' (' . round($value) . round($delta) . ')';
+}
 
 $tbl = "";
 while($row = $q->fetch(PDO::FETCH_ASSOC)) {
@@ -103,11 +125,11 @@ while($row = $q->fetch(PDO::FETCH_ASSOC)) {
     $red1 = '<b>';
     $tbl .= '<tr>';
     $tbl .= '<td>' . date('Y/m/d H:i',strtotime($row['time'])) . '</td>';
-    $tbl .= '<td class="' . $blueclass . '">' . $players[$row['bluedef']]['name'] . ' (elo)</td>';
-    $tbl .= '<td class="' . $blueclass . '">' . $players[$row['blueatk']]['name'] . ' (elo)</td>';
+    $tbl .= '<td class="' . $blueclass . '">' . $players[$row['bluedef']]['name'] . printElo($row['bluedef_rating'], $row['bluedef_delta']) . '</td>';
+    $tbl .= '<td class="' . $blueclass . '">' . $players[$row['blueatk']]['name'] . printElo($row['blueatk_rating'], $row['blueatk_delta']) . '</td>';
     $tbl .= '<td class="text-center">' . $row['scoreblue'] . '-' . $row['scorered'] . '</td>';
-    $tbl .= '<td class="' . $redclass . '">' . $players[$row['redatk']]['name'] . ' (elo)</td>';
-    $tbl .= '<td class="' . $redclass . '">' . $players[$row['reddef']]['name'] . ' (elo)</td>';
+    $tbl .= '<td class="' . $redclass . '">' . $players[$row['redatk']]['name'] . printElo($row['reddef_rating'], $row['reddef_delta']) . '</td>';
+    $tbl .= '<td class="' . $redclass . '">' . $players[$row['reddef']]['name'] . printElo($row['redatk_rating'], $row['redatk_delta']) . '</td>';
     //(<%= m.elos[0].to_s + (if m.elodiffs[0] >= 0 then "+" else "" end) + m.elodiffs[0].to_s %>)
     $tbl .= sprintf('<td class="text-center"> %02d:%02d</td>', floor($row['duration']/60) , $row['duration'] % 60);
     $tbl .= '<td class="text-center">-</td>';

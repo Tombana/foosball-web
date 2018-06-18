@@ -108,6 +108,30 @@
       </div>
 
       <div class="row">
+        <div class="col-12">
+          <h3>Recent matches</h3>
+          <div style="overflow-x:auto;">
+            <table class="table table-striped table-sm">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th><span class="blueteam">Defense</span></th>
+                  <th><span class="blueteam">Offence</span></th>
+                  <th class="text-center">Score</th>
+                  <th><span class="redteam">Offence</span></th>
+                  <th><span class="redteam">Defense</span></th>
+                  <th class="text-center">Duration</th>
+                  <th class="text-center">Replays</th>
+                </tr>
+              </thead>
+              <tbody id="matches">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
         <div class="col-md-12">
           <h3>All players</h3>
           You are only shown on this page if your most recent match was less than (60 + #matches) days ago.
@@ -128,31 +152,6 @@
           <h3>Statistics</h3>
           <h4><span class="blueteam" id="bluewins">Blue wins: </span></h4>
           <h4><span class="redteam"  id="redwins" >Red wins: </span></h4>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-12">
-          <h4>Matches played</h4>
-          Only 50 most recent matches are shown.
-          <div style="overflow-x:auto;">
-            <table class="table table-striped table-sm">
-              <thead>
-                <tr>
-                  <th>Time</th>
-                  <th><span class="blueteam">Defense</span></th>
-                  <th><span class="blueteam">Offence</span></th>
-                  <th class="text-center">Score</th>
-                  <th><span class="redteam">Offence</span></th>
-                  <th><span class="redteam">Defense</span></th>
-                  <th class="text-center">Duration</th>
-                  <th class="text-center">Replays</th>
-                </tr>
-              </thead>
-              <tbody id="matches">
-              </tbody>
-            </table>
-          </div>
         </div>
       </div>
 
