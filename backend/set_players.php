@@ -20,5 +20,4 @@ foreach ($allpositions as $position) {
 }
 
 echo json_encode($result);
-
 ?>

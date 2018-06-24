@@ -6,10 +6,10 @@ function startup() {
     $("#swapblue").click(swap_blue);
     $("#swapred").click(swap_red);
 
-    $('#bluedef').change( function() { set_player('bluedef', $('#bluedef').val()); } );
-    $('#blueatk').change( function() { set_player('blueatk', $('#blueatk').val()); } );
-    $('#redatk').change(  function() { set_player('redatk',  $('#redatk').val()); } );
-    $('#reddef').change(  function() { set_player('reddef',  $('#reddef').val()); } );
+    $('#bluedef').change( function() { set_player('bluedef', $('#bluedef').val()); elo_prediction(); } );
+    $('#blueatk').change( function() { set_player('blueatk', $('#blueatk').val()); elo_prediction(); } );
+    $('#redatk').change(  function() { set_player('redatk',  $('#redatk').val()); elo_prediction(); } );
+    $('#reddef').change(  function() { set_player('reddef',  $('#reddef').val()); elo_prediction(); } );
 
     load_season_section(default_season_id);
 }
@@ -43,6 +43,8 @@ function load_season_section(season_id) {
         $('#blueatk').val(data['playerpositions']['blueatk']);
         $('#redatk').val(data['playerpositions']['redatk']);
         $('#reddef').val(data['playerpositions']['reddef']);
+
+        elo_prediction();
     });
 };
 
@@ -63,6 +65,7 @@ function swap_teams() {
     set_player('blueatk', a3);
     set_player('redatk',  a2);
     set_player('reddef',  a1);
+    elo_prediction();
 }
 function swap_blue() {
     a1 = $('#bluedef').val();
@@ -71,6 +74,7 @@ function swap_blue() {
     $('#blueatk').val(a1);
     set_player('bluedef', a2);
     set_player('blueatk', a1);
+    elo_prediction();
 }
 function swap_red() {
     a3 = $('#redatk').val();
@@ -79,6 +83,7 @@ function swap_red() {
     $('#reddef').val(a3);
     set_player('redatk', a4);
     set_player('reddef', a3);
+    elo_prediction();
 }
 
 function set_player(position, player_id) {
@@ -90,5 +95,16 @@ function set_player(position, player_id) {
     });
 }
 
+function elo_prediction() {
+    redElo  = 0.565 * $('#reddef').find(':selected').data('defrating')  + 0.435 * $('#redatk').find(':selected').data('atkrating');
+    blueElo = 0.565 * $('#bluedef').find(':selected').data('defrating') + 0.435 * $('#blueatk').find(':selected').data('atkrating');
+
+    blueValue = 1.0 / (1.0 + Math.pow(10, (redElo - blueElo) / 400.0));
+    redValue = 1.0 - blueValue;
+
+    console.log("Predict that Elo!");
+    $('#blueprediction').html(Math.round(100.0 * blueValue)/100.0);
+    $('#redprediction').html(Math.round(100.0 * redValue)/100.0);
+}
 
 $(document).ready(startup)

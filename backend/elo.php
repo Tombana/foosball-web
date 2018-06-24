@@ -130,43 +130,4 @@ function fullAnalysis($allmatches, $playernames, $pdo) {
     $pdo->exec("REPLACE INTO statistics (key,value) VALUES ('bluewins',{$bluewins}), ('redwins',{$redwins})");
 }
 
-//  # Most recent match should be within 2 months + twice the number of matches in days
-//  tnow = Time.now
-//  classification = classification.select{|playerid,data| (tnow - data[:latest_match_time]) <= (2 * (30 + data[:num_matches]) * (24*60*60)) }
-//
-//  best_attackers = classification.values.sort do |a, b|
-//    comp = b[:attackElo] <=> a[:attackElo]
-//    comp.zero? ? (b[:defenseElo] <=> a[:defenseElo]) : comp
-//  end
-//  best_defenders = classification.values.sort do |a, b|
-//    comp = b[:defenseElo] <=> a[:defenseElo]
-//    comp.zero? ? (b[:attackElo] <=> a[:attackElo]) : comp
-//  end
-//  best_attackers.each do |c|
-//    c[:attackElo] = c[:attackElo].round
-//    c[:defenseElo] = c[:defenseElo].round
-//  end
-//  best_defenders.each do |c|
-//    c[:attackElo] = c[:attackElo].round
-//    c[:defenseElo] = c[:defenseElo].round
-//  end
-//
-//  # Sort by points and then by number of matches (reverse)
-//  sorted_classification = classification.values.sort do |a, b|
-//    comp = b[:points] <=> a[:points]
-//    comp.zero? ? (a[:num_matches] <=> b[:num_matches]) : comp
-//  end
-//
-//  pos = 1
-//  sorted_classification.each do |c|
-//    c[:position] = pos
-//    pos += 1
-//
-//    c[:attackElo] = c[:attackElo].round
-//    c[:defenseElo] = c[:defenseElo].round
-//  end
-//
-//  return {:overall => sorted_classification, :bestattackers => best_attackers, :bestdefenders => best_defenders}
-//
-
 ?>

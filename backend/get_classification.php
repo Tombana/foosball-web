@@ -21,14 +21,14 @@ $result->playerpositions = [];
 $result->recentmatches = "";
 
 // "playerlist":
-$q = $pdo->query('SELECT id,name FROM players ORDER BY name ASC');
+$q = $pdo->query('SELECT id,name,atk_rating,def_rating,num_matches,matches_won,atk_matches,def_matches,active FROM players INNER JOIN player_ratings on players.id = player_ratings.player_id ORDER BY name ASC');
 
 $players = [];
 $abcPlayerIds = [];
 while($row = $q->fetch(PDO::FETCH_ASSOC)) {
-    $players[$row['id']]['name'] = $row['name'];
+    $players[$row['id']] = $row;
     $abcPlayerIds[] = $row['id'];
-    $result->playerlist .= '<option value="'. $row['id'] . '">' . $row['name'] . '</option>';
+    $result->playerlist .= "<option value=\"{$row['id']}\" data-atkrating=\"{$row['atk_rating']}\" data-defrating=\"{$row['def_rating']}\">{$row['name']}</option>";
 }
 
 if (!empty($_REQUEST['elo'])) {
@@ -46,20 +46,15 @@ while($row = $q->fetch(PDO::FETCH_ASSOC)) {
         $result->redwins  = $row['value'];
 }
 // "classification":
-$q = $pdo->query("SELECT * FROM player_ratings WHERE active = 1 ORDER BY player_id DESC");
-while($row = $q->fetch(PDO::FETCH_ASSOC)) {
-    $players[$row['player_id']]['rating'] = $row;
-}
-
 $tbl = "";
 foreach($abcPlayerIds as $id) {
-    $rating = &$players[$id]['rating'];
-    if(!empty($rating)) {
+    $p = &$players[$id];
+    if(!empty($p) && $p['active'] != false) {
         $tbl .= '<tr>';
-        $tbl .= '<td class="text-left" >'. $players[$id]['name'] . '</td>';
-        $tbl .= '<td class="text-right">'. $rating['matches_won'] . '/' . $rating['num_matches'] . '</td>';
-        $tbl .= '<td class="text-right">'. round($rating['atk_rating']) . '</td><td class="text-left">(' . $rating['atk_matches'] . ')</td>';
-        $tbl .= '<td class="text-right">'. round($rating['def_rating']) . '</td><td class="text-left">(' . $rating['def_matches'] . ')</td>';
+        $tbl .= '<td class="text-left" >'. $p['name'] . '</td>';
+        $tbl .= '<td class="text-right">'. $p['matches_won'] . '/' . $p['num_matches'] . '</td>';
+        $tbl .= '<td class="text-right">'. round($p['atk_rating']) . '</td><td class="text-left">(' . $p['atk_matches'] . ')</td>';
+        $tbl .= '<td class="text-right">'. round($p['def_rating']) . '</td><td class="text-left">(' . $p['def_matches'] . ')</td>';
         $tbl .= '</tr>';
     }
 }
