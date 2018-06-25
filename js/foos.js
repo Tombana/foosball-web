@@ -11,6 +11,23 @@ function startup() {
     $('#redatk').change(  function() { set_player('redatk',  $('#redatk').val()); elo_prediction(); } );
     $('#reddef').change(  function() { set_player('reddef',  $('#reddef').val()); elo_prediction(); } );
 
+    $('#exampleModal').on('show.bs.modal', function (event) {
+      var button = $(event.relatedTarget) // Button that triggered the modal
+      var pId = button.data('playerid');
+      var pName = button.html();
+      var recipient = button.data('playerid') // Extract info from data-* attributes
+      // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+      // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+      var modal = $(this)
+      modal.find('.modal-title').text('Rating history for ' + pName);
+      var graphDiv = modal.find('.modal-graph');
+      $.getJSON( 'backend/get_history.php?player_id=' + pId, function(data) {
+          graphDiv.html("Does anyone know a simple Javascript library for creating a graph out of these data points??<br>Attack history:<br>" + data['atk_history'] + "<br>Defense history:<br>" + data['def_history']);
+        //data['atk_history']
+        //data['def_history']
+      });
+    })
+
     load_season_section(default_season_id);
 }
 
