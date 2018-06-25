@@ -1,5 +1,5 @@
 function startup() {
-	$(".season-selector").click(select_season);
+    $(".season-selector").click(select_season);
 
     $("#swapteams1").click(swap_teams);
     $("#swapteams2").click(swap_teams);
@@ -12,23 +12,39 @@ function startup() {
     $('#reddef').change(  function() { set_player('reddef',  $('#reddef').val()); elo_prediction(); } );
 
     $('#exampleModal').on('show.bs.modal', function (event) {
-      var button = $(event.relatedTarget) // Button that triggered the modal
-      var pId = button.data('playerid');
-      var pName = button.html();
-      var recipient = button.data('playerid') // Extract info from data-* attributes
-      // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-      // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-      var modal = $(this)
-      modal.find('.modal-title').text('Rating history for ' + pName);
-      var graphDiv = modal.find('.modal-graph');
-      $.getJSON( 'backend/get_history.php?player_id=' + pId, function(data) {
-          graphDiv.html("Does anyone know a simple Javascript library for creating a graph out of these data points??<br>Attack history:<br>" + data['atk_history'] + "<br>Defense history:<br>" + data['def_history']);
-        //data['atk_history']
-        //data['def_history']
-      });
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var pId = button.data('playerid');
+        var pName = button.html();
+        var recipient = button.data('playerid') // Extract info from data-* attributes
+        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+        var modal = $(this)
+        modal.find('.modal-title').text('Rating history for ' + pName);
+        $.getJSON( 'backend/get_history.php?player_id=' + pId, function(data) {
+            var chartdata = [[
+                {label: 'Time', id: 'time'},
+                {label: 'Attack rating', id: 'atk_rating', type: 'number'},
+                {label: 'Defense rating', id: 'def_rating', type: 'number'} ]];
+
+            var m = Math.min(data['atk_history'].length, data['def_history'].length);
+            for(var i = 0; i < m; i++) {
+                chartdata.push([ i, data['atk_history'][i], data['def_history'][i] ]);
+            }
+            var charttable = google.visualization.arrayToDataTable(chartdata);
+
+            var options = {
+                legend: { position: 'bottom' }
+            };
+            var chart = new google.visualization.LineChart(document.getElementById('line_chart'));
+            chart.draw(charttable, options);
+        });
     })
 
     load_season_section(default_season_id);
+
+    charts_loaded = false;
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(function(){ charts_loaded = true; });
 }
 
 function select_season() {
@@ -36,8 +52,8 @@ function select_season() {
 }
 
 function load_season_section(season_id) {
-	season_title = $(".season-selector[data-season-id=" + season_id + "]").text();
-	$("#season-selected").text(season_title);
+    season_title = $(".season-selector[data-season-id=" + season_id + "]").text();
+    $("#season-selected").text(season_title);
 
     $.getJSON( 'backend/get_classification.php?season_id=' + season_id, function( data ) {
         // JSON arrays become normal javascript arrays
@@ -70,10 +86,10 @@ function load_season_section(season_id) {
 // (atk) 2     4 (def)
 
 function swap_teams() {
-    a1 = $('#bluedef').val();
-    a2 = $('#blueatk').val();
-    a3 = $('#redatk').val();
-    a4 = $('#reddef').val();
+    var a1 = $('#bluedef').val();
+    var a2 = $('#blueatk').val();
+    var a3 = $('#redatk').val();
+    var a4 = $('#reddef').val();
     $('#bluedef').val(a4);
     $('#blueatk').val(a3);
     $('#redatk').val(a2);
@@ -85,8 +101,8 @@ function swap_teams() {
     elo_prediction();
 }
 function swap_blue() {
-    a1 = $('#bluedef').val();
-    a2 = $('#blueatk').val();
+    var a1 = $('#bluedef').val();
+    var a2 = $('#blueatk').val();
     $('#bluedef').val(a2);
     $('#blueatk').val(a1);
     set_player('bluedef', a2);
@@ -94,8 +110,8 @@ function swap_blue() {
     elo_prediction();
 }
 function swap_red() {
-    a3 = $('#redatk').val();
-    a4 = $('#reddef').val();
+    var a3 = $('#redatk').val();
+    var a4 = $('#reddef').val();
     $('#redatk').val(a4);
     $('#reddef').val(a3);
     set_player('redatk', a4);
@@ -120,11 +136,11 @@ function eloToPoints(eloValue) {
 }
 
 function elo_prediction() {
-    redElo  = 0.565 * $('#reddef').find(':selected').data('defrating')  + 0.435 * $('#redatk').find(':selected').data('atkrating');
-    blueElo = 0.565 * $('#bluedef').find(':selected').data('defrating') + 0.435 * $('#blueatk').find(':selected').data('atkrating');
+    var redElo  = 0.565 * $('#reddef').find(':selected').data('defrating')  + 0.435 * $('#redatk').find(':selected').data('atkrating');
+    var blueElo = 0.565 * $('#bluedef').find(':selected').data('defrating') + 0.435 * $('#blueatk').find(':selected').data('atkrating');
 
-    blueValue = 1.0 / (1.0 + Math.pow(10, (redElo - blueElo) / 400.0));
-    redValue = 1.0 - blueValue;
+    var blueValue = 1.0 / (1.0 + Math.pow(10, (redElo - blueElo) / 400.0));
+    var redValue = 1.0 - blueValue;
 
     $('#blueprediction').html("" + (Math.round(100.0 * blueValue)/100.0) + " (" + eloToPoints(blueValue) + " pts)");
     $( '#redprediction').html("" + (Math.round(100.0 *  redValue)/100.0) + " (" + eloToPoints( redValue) + " pts)");
