@@ -95,6 +95,13 @@ function set_player(position, player_id) {
     });
 }
 
+function eloToPoints(eloValue) {
+    if( eloValue < 0.5) {
+        return Math.round(eloValue * 20.0);
+    }
+    return 10;
+}
+
 function elo_prediction() {
     redElo  = 0.565 * $('#reddef').find(':selected').data('defrating')  + 0.435 * $('#redatk').find(':selected').data('atkrating');
     blueElo = 0.565 * $('#bluedef').find(':selected').data('defrating') + 0.435 * $('#blueatk').find(':selected').data('atkrating');
@@ -102,9 +109,8 @@ function elo_prediction() {
     blueValue = 1.0 / (1.0 + Math.pow(10, (redElo - blueElo) / 400.0));
     redValue = 1.0 - blueValue;
 
-    console.log("Predict that Elo!");
-    $('#blueprediction').html(Math.round(100.0 * blueValue)/100.0);
-    $('#redprediction').html(Math.round(100.0 * redValue)/100.0);
+    $('#blueprediction').html("" + (Math.round(100.0 * blueValue)/100.0) + " (" + eloToPoints(blueValue) + " pts)");
+    $( '#redprediction').html("" + (Math.round(100.0 *  redValue)/100.0) + " (" + eloToPoints( redValue) + " pts)");
 }
 
 $(document).ready(startup)
