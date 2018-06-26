@@ -18,6 +18,10 @@ To use nginx with sqlite3 on Arch linux:
 
 - Set a password in `admin/phpliteadmin.config.php`
 
+- Initialize the database
+
+    `sqlite3 -init create_database.sql backend/foos.db`
+
 ## Adding players
 
 - Click the admin panel link at the bottom of the page
