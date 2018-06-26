@@ -22,13 +22,13 @@ if (empty($_REQUEST['player_id'])) {
 
         $eloValue = 0;
         if ($row['bluedef'] == $pId)
-            $defList[] = $row['bluedef_rating'];
+            $defList[] = [$timestring, $row['bluedef_rating']];
         elseif ($row['blueatk'] == $pId)
-            $atkList[] = $row['blueatk_rating'];
+            $atkList[] = [$timestring, $row['blueatk_rating']];
         elseif ($row['redatk'] == $pId)
-            $atkList[] = $row['redatk_rating'];
+            $atkList[] = [$timestring, $row['redatk_rating']];
         elseif ($row['reddef'] == $pId)
-            $defList[] = $row['reddef_rating'];
+            $defList[] = [$timestring, $row['reddef_rating']];
     }
 
     $result = ["atk_history" => $atkList , "def_history" => $defList];

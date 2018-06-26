@@ -23,12 +23,16 @@ function startup() {
         $.getJSON( 'backend/get_history.php?player_id=' + pId, function(data) {
             var chartdata = [[
                 {label: 'Time', id: 'time'},
-                {label: 'Attack rating', id: 'atk_rating', type: 'number'},
-                {label: 'Defense rating', id: 'def_rating', type: 'number'} ]];
+                {label: 'Defense rating', id: 'def_rating', type: 'number'},
+                {label: 'Attack rating', id: 'atk_rating', type: 'number'} ]];
 
-            var m = Math.min(data['atk_history'].length, data['def_history'].length);
-            for(var i = 0; i < m; i++) {
-                chartdata.push([ i, data['atk_history'][i], data['def_history'][i] ]);
+            var d = data['def_history']; // should be reference
+            for(var i = 0; i < d.length; i++) {
+                chartdata.push([ new Date(d[i][0]), d[i][1], null ]);
+            }
+            var d = data['atk_history']; // should be reference
+            for(var i = 0; i < d.length; i++) {
+                chartdata.push([ new Date(d[i][0]), null, d[i][1] ]);
             }
             var charttable = google.visualization.arrayToDataTable(chartdata);
 
