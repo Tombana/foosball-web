@@ -1,7 +1,6 @@
 <?php
 header("Content-Type: application/json; charset=UTF-8");
-
-$pdo = new PDO("sqlite:foos.db");
+require 'db.php';
 
 $allpositions = ["bluedef", "blueatk", "redatk", "reddef"];
 

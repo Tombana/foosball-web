@@ -48,7 +48,7 @@ function process($data) {
         return ['result' => 'Invalid request. "type" : "quickmatch" expected.'];
     }
 
-    $pdo = new PDO("sqlite:foos.db");
+    require 'db.php';
 
     $dbValues = [
         "bluedef" => getPlayerFromName($data['players'][0]),

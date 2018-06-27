@@ -6,8 +6,7 @@ if (empty($_REQUEST['player_id'])) {
 } else {
     $pId = $_REQUEST['player_id'];
 
-
-    $pdo = new PDO("sqlite:foos.db");
+    require 'db.php';
 
     $atkList = [];
     $defList = [];

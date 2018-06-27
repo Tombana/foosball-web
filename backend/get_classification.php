@@ -1,8 +1,7 @@
 <?php
 header("Content-Type: application/json; charset=UTF-8");
 require 'elo.php';
-
-$pdo = new PDO("sqlite:foos.db");
+require 'db.php';
 
 $season_id = 1;
 if (!empty($_REQUEST['season_id'])) {
