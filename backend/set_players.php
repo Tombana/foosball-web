@@ -11,7 +11,7 @@ foreach ($allpositions as $position) {
     if (!empty($_REQUEST[$position])) {
         $player_id = $_REQUEST[$position];
 
-        $affectedrows = $pdo->exec("UPDATE playerpositions SET player_id='{$player_id}' WHERE position='{$position}'");
+        $affectedrows = $pdo->exec("REPLACE INTO playerpositions (position, player_id) VALUES ('{$position}','{$player_id}')");
 
         $result[$position] = $player_id;
         $result['affectedrows'] += $affectedrows;
