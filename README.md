@@ -22,6 +22,11 @@ To use nginx with sqlite3 on Arch linux:
 
     `sqlite3 -init create_database.sql backend/foos.db`
 
+- Make sure php can write to the database and the directory it is in
+
+    `chown http backend`
+    `chown http backend/foos.db`
+
 ## Adding players
 
 - Click the admin panel link at the bottom of the page

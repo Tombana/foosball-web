@@ -1,6 +1,5 @@
 <?php
 header("Content-Type: application/json; charset=UTF-8");
-require 'elo.php';
 require 'db.php';
 
 $season_id = 1;
@@ -28,12 +27,6 @@ while($row = $q->fetch(PDO::FETCH_ASSOC)) {
     $players[$row['id']] = $row;
     $abcPlayerIds[] = $row['id'];
     $result->playerlist .= "<option value=\"{$row['id']}\" data-atkrating=\"{$row['atk_rating']}\" data-defrating=\"{$row['def_rating']}\">{$row['name']}</option>";
-}
-
-if (!empty($_REQUEST['elo'])) {
-    $q = $pdo->query('SELECT * FROM matches ORDER BY id ASC');
-    $allmatches = $q->fetchAll(PDO::FETCH_ASSOC);
-    fullAnalysis($allmatches, $players, $pdo);
 }
 
 // "bluewins", "redwins"

@@ -1,4 +1,8 @@
 <?php
+//
+// Recompute all ratings
+//
+require 'db.php';
 
 // Map scores to a number in [0,1]
 function scoreToValue($scoreblue, $scorered) {
@@ -22,15 +26,13 @@ function setPlayerDefaults(& $p) {
     $p['last_match_date'] = mktime(0, 0, 0, 1, 1, 2016);
 }
 
-function fullAnalysis($allmatches, $playernames, $pdo) {
-    // $playernames[id] = namestring
+function fullAnalysis($allmatches, $playerids, $pdo) {
 
     $players = [];
-    foreach($playernames as $key => $name) {
-        $players[$key] = [];
-        $players[$key]['name'] = $name;
-        $players[$key]['player_id'] = $key;
-        setPlayerDefaults($players[$key]);
+    foreach($playerids as $pid) {
+        $players[$pid] = [];
+        $players[$pid]['player_id'] = $pid;
+        setPlayerDefaults($players[$pid]);
     }
 
     $bluewins = 0;
@@ -130,4 +132,22 @@ function fullAnalysis($allmatches, $playernames, $pdo) {
     $pdo->exec("REPLACE INTO statistics (key,value) VALUES ('bluewins',{$bluewins}), ('redwins',{$redwins})");
 }
 
+
+$q = $pdo->query('SELECT id FROM players');
+$pids = $q->fetchAll(PDO::FETCH_COLUMN);
+$q = $pdo->query('SELECT * FROM matches ORDER BY id ASC');
+$allmatches = $q->fetchAll(PDO::FETCH_ASSOC);
+fullAnalysis($allmatches, $pids, $pdo);
+
 ?>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Foosball tournament</title>
+  </head>
+  <body>
+    <h1>Recomputed Elo</h1>
+  </body>
+</html>
+
