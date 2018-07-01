@@ -25,7 +25,14 @@
             </a>
             <ul class="dropdown-menu">
               <li><a href="#" class="dropdown-item season-selector" data-season-id="1">Season one</a></li>
+              <li><a href="#" class="dropdown-item season-selector" data-season-id="2">Season two</a></li>
             </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" data-toggle="modal" data-target="#newplayerModal">Add player</a>
+          </li>
+          <li class="nav-item">
+            <a href="admin/index.php" class="nav-link">Admin panel</a>
           </li>
         </ul>
       </div>
@@ -36,7 +43,8 @@
       <div class="row">
         <div class="col-2"></div>
         <div class="col-md-8">
-          <h3>Players in the next match</h3>
+          <h3>Start new match</h3>
+          Select players, then start a match at the foosball table.
           <div style="overflow-x:auto;">
             <table class="table table-sm">
               <tr>
@@ -75,6 +83,7 @@
         <div class="col-md-6">
           <h3>Top 10 attackers</h3>
           Need to play at least 5 matches as attacker to appear.
+          Click a name for details.
           <table class="table table-striped table-sm">
             <thead>
               <tr>
@@ -92,6 +101,7 @@
         <div class="col-md-6">
           <h3>Top 10 defenders</h3>
           Need to play at least 5 matches as defender to appear.
+          Click a name for details.
           <table class="table table-striped table-sm">
             <thead>
               <tr>
@@ -134,7 +144,7 @@
       <div class="row">
         <div class="col-md-12">
           <h3>All players</h3>
-          You are only shown on this page if your most recent match was less than (60 + #matches) days ago.
+          Players are hidden if their last match was too long ago. Click a name for details.
           <div style="overflow-x:auto;">
             <table class="table table-striped table-sm">
               <thead>
@@ -163,19 +173,45 @@
     </div>
 
     <!-- Modal for Elo history  -->
-    <div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal" id="eloModal" tabindex="-1" role="dialog" aria-labelledby="eloModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Rating history</h5>
+            <h5 class="modal-title" id="eloModalLabel">Rating history</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
             <div style="overflow-x:auto;height:230px;">
-              <div id="line_chart" style="width: 600px; height:200px;"></div>
+              <div id="line_chart" style="width: 795; height:200px;"></div>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for adding a player  -->
+    <div class="modal" id="newplayerModal" tabindex="-1" role="dialog" aria-labelledby="newplayerModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="newplayerModalLabel">Add new player</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="player-name" class="col-form-label">Player name (case sensitive):</label>
+                <input type="text" class="form-control" id="player-name">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="addplayerbutton">Add player</button>
           </div>
         </div>
       </div>

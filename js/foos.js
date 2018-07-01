@@ -11,7 +11,7 @@ function startup() {
     $('#redatk').change(  function() { set_player('redatk',  $('#redatk').val()); elo_prediction(); } );
     $('#reddef').change(  function() { set_player('reddef',  $('#reddef').val()); elo_prediction(); } );
 
-    $('#exampleModal').on('show.bs.modal', function (event) {
+    $('#eloModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget) // Button that triggered the modal
         var pId = button.data('playerid');
         var pName = button.html();
@@ -43,7 +43,23 @@ function startup() {
             var chart = new google.visualization.LineChart(document.getElementById('line_chart'));
             chart.draw(charttable, options);
         });
-    })
+    });
+
+    
+    $('#newplayerModal').on('shown.bs.modal', function() { $('#player-name').trigger('focus'); });
+
+    $('#addplayerbutton').click(function () {
+        var name = $('#player-name').val().trim();
+        if (name == "") {
+            $('#newplayerModal').modal('hide');
+        } else {
+            $.getJSON('backend/add_player.php?name=' + encodeURI(name), function(data) {
+                alert(data['result']);
+                window.location.reload(false);
+            });
+            $('#newplayerModal').modal('hide');
+        }
+    });
 
     load_season_section(default_season_id);
 

@@ -27,8 +27,3 @@ To use nginx with sqlite3 on Arch linux:
     `chown http backend`
     `chown http backend/foos.db`
 
-## Adding players
-
-- Click the admin panel link at the bottom of the page
-
-- Navigate to the `players` table and insert a player

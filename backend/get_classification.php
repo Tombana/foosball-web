@@ -43,7 +43,7 @@ foreach($abcPlayerIds as $id) {
     $p = &$players[$id];
     if(!empty($p) && $p['active'] != false) {
         $tbl .= '<tr>';
-        $tbl .= '<td class="text-left" ><span data-toggle="modal" data-target="#exampleModal" data-playerid="' . $p['id'] . '">'. $p['name'] . '</span></td>';
+        $tbl .= '<td class="text-left" ><span data-toggle="modal" data-target="#eloModal" data-playerid="' . $p['id'] . '">'. $p['name'] . '</span></td>';
         $tbl .= '<td class="text-right">'. $p['matches_won'] . '/' . $p['num_matches'] . '</td>';
         $tbl .= '<td class="text-right">'. round($p['atk_rating']) . '</td><td class="text-left">(' . $p['atk_matches'] . ')</td>';
         $tbl .= '<td class="text-right">'. round($p['def_rating']) . '</td><td class="text-left">(' . $p['def_matches'] . ')</td>';
@@ -59,7 +59,7 @@ $q = $pdo->query("SELECT * FROM player_ratings WHERE active = 1 AND atk_matches 
 while($row = $q->fetch(PDO::FETCH_ASSOC)) {
     $tbl .= '<tr>';
     $tbl .= '<td class="text-right">'. $pos++ . '</td>';
-    $tbl .= '<td class="text-left" ><span data-toggle="modal" data-target="#exampleModal" data-playerid="' . $row['player_id'] . '">'. $players[$row['player_id']]['name'] . '</span></td>';
+    $tbl .= '<td class="text-left" ><span data-toggle="modal" data-target="#eloModal" data-playerid="' . $row['player_id'] . '">'. $players[$row['player_id']]['name'] . '</span></td>';
     $tbl .= '<td class="text-right">'. round($row['atk_rating'])  . '</td>';
     $tbl .= '<td class="text-right">'. $row['atk_matches'] . '</td>';
     $tbl .= '</tr>';
@@ -73,7 +73,7 @@ $q = $pdo->query("SELECT * FROM player_ratings WHERE active = 1 AND def_matches 
 while($row = $q->fetch(PDO::FETCH_ASSOC)) {
     $tbl .= '<tr>';
     $tbl .= '<td class="text-right">'. $pos++ . '</td>';
-    $tbl .= '<td class="text-left" ><span data-toggle="modal" data-target="#exampleModal" data-playerid="' . $row['player_id'] . '">'. $players[$row['player_id']]['name'] . '</span></td>';
+    $tbl .= '<td class="text-left" ><span data-toggle="modal" data-target="#eloModal" data-playerid="' . $row['player_id'] . '">'. $players[$row['player_id']]['name'] . '</span></td>';
     $tbl .= '<td class="text-right">'. round($row['def_rating'])  . '</td>';
     $tbl .= '<td class="text-right">'. $row['def_matches'] . '</td>';
     $tbl .= '</tr>';
