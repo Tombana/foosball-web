@@ -62,10 +62,10 @@ function process($data) {
         return ['result' => "Invalid request. JSON format expected."];
     }
 
-    if (!file_exists("results")) {
-        mkdir("results");
+    if (!file_exists("../db/results")) {
+        mkdir("../db/results");
     }
-    $handle = fopen("results/result_" . date('Y_m_d_H_i_s') . ".json", 'w');
+    $handle = fopen("../db/results/result_" . date('Y_m_d_H_i_s') . ".json", 'w');
     if ($handle) {
         fwrite($handle, json_encode($data));
         fclose($handle);

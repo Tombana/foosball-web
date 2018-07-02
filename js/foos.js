@@ -20,7 +20,7 @@ function startup() {
         // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
         var modal = $(this)
         modal.find('.modal-title').text('Rating history for ' + pName);
-        $.getJSON( 'backend/get_history.php?player_id=' + pId, function(data) {
+        $.getJSON( 'api/get_history.php?player_id=' + pId, function(data) {
             var chartdata = [[
                 {label: 'Time', id: 'time'},
                 {label: 'Defense rating', id: 'def_rating', type: 'number'},
@@ -53,7 +53,7 @@ function startup() {
         if (name == "") {
             $('#newplayerModal').modal('hide');
         } else {
-            $.getJSON('backend/add_player.php?name=' + encodeURI(name), function(data) {
+            $.getJSON('api/add_player.php?name=' + encodeURI(name), function(data) {
                 alert(data['result']);
                 window.location.reload(false);
             });
@@ -76,7 +76,7 @@ function load_season_section(season_id) {
     season_title = $(".season-selector[data-season-id=" + season_id + "]").text();
     $("#season-selected").text(season_title);
 
-    $.getJSON( 'backend/get_classification.php?season_id=' + season_id, function( data ) {
+    $.getJSON( 'api/get_classification.php?season_id=' + season_id, function( data ) {
         // JSON arrays become normal javascript arrays
         // JSON key-value-pairs become javascript objects
         // which can be used with data["key"] or with
@@ -141,9 +141,9 @@ function swap_red() {
 }
 
 function set_player(position, player_id) {
-    $.getJSON("backend/set_players.php?" + position + "=" + player_id, function (data) {
+    $.getJSON("api/set_players.php?" + position + "=" + player_id, function (data) {
         if (data['affectedrows'] != 1) {
-            console.log("Warning: backend/set_players.php?" + position + "=" + player_id + " returned: ");
+            console.log("Warning: api/set_players.php?" + position + "=" + player_id + " returned: ");
             console.log(data);
         }
     });
