@@ -9,17 +9,19 @@ header("Content-Type: application/json; charset=UTF-8");
 // "replays => [...]
 
 function getPlayerFromName($pdo, $name) {
-    $q = $pdo->query("SELECT id FROM players WHERE name='{$name}'");
+    $q = $pdo->prepare("SELECT id FROM players WHERE name=?");
+    $q->execute(array($name));
     // Return the first result
     if($row = $q->fetch(PDO::FETCH_ASSOC)) {
         return $row['id'];
     }
 
     // Player does not exist; create it
-    $pdo->exec("INSERT INTO players ('name') VALUES ('{$name}')");
+    $q2 = $pdo->prepare("INSERT INTO players ('name') VALUES (?)");
+    $q2->execute(array($name));
 
-    // SELECT to get the newly created id
-    $q = $pdo->query("SELECT id FROM players WHERE name='{$name}'");
+    // Original query to get the newly created id
+    $q->execute(array($name));
     // Return the first result
     if($row = $q->fetch(PDO::FETCH_ASSOC)) {
         return $row['id'];
@@ -29,8 +31,9 @@ function getPlayerFromName($pdo, $name) {
 }
 
 function getRatingsFromId($pdo, $pid) {
-    $q = $pdo->query("SELECT player_id,atk_rating,def_rating,num_matches,matches_won,atk_matches,def_matches,active
-        FROM player_ratings WHERE player_id = $pid");
+    $q = $pdo->prepare("SELECT player_id,atk_rating,def_rating,num_matches,matches_won,atk_matches,def_matches,active
+        FROM player_ratings WHERE player_id = ?");
+    $q->execute(array($pid));
     if($row = $q->fetch(PDO::FETCH_ASSOC)) {
         return $row;
     }
@@ -106,8 +109,6 @@ function process($data) {
 
     $stmnt->execute($dbValues);
 
-    // $pdo->query("SELECT last_insert_rowid()");
-    // $pdo->query("SELECT seq FROM sqlite_sequence WHERE name=matches");
     $matchid = $pdo->lastInsertId();
 
     if (isset($data['replays'])) {

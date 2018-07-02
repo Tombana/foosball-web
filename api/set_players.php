@@ -11,10 +11,11 @@ foreach ($allpositions as $position) {
     if (!empty($_REQUEST[$position])) {
         $player_id = $_REQUEST[$position];
 
-        $affectedrows = $pdo->exec("REPLACE INTO playerpositions (position, player_id) VALUES ('{$position}','{$player_id}')");
-
-        $result[$position] = $player_id;
-        $result['affectedrows'] += $affectedrows;
+        $q = $pdo->prepare("REPLACE INTO playerpositions (position, player_id) VALUES (?,?)");
+        if ($q->execute(array($position,$player_id)) ) {
+            $result[$position] = $player_id;
+            $result['affectedrows'] += $q->rowCount();
+        }
     }
 }
 

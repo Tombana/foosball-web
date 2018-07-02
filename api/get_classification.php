@@ -4,7 +4,7 @@ require 'db.php';
 
 $season_id = 1;
 if (!empty($_REQUEST['season_id'])) {
-    $season_id = $_REQUEST['season_id'];
+    $season_id = (int)$_REQUEST['season_id'];
 }
 
 $result = new stdClass(); // empty object in php

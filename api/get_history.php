@@ -11,11 +11,12 @@ if (empty($_REQUEST['player_id'])) {
     $atkList = [];
     $defList = [];
 
-    $q = $pdo->query("SELECT bluedef,blueatk,redatk,reddef,time,
+    $q = $pdo->prepare("SELECT bluedef,blueatk,redatk,reddef,time,
         bluedef_rating,blueatk_rating, redatk_rating,reddef_rating
         FROM matches INNER JOIN match_ratings ON matches.id = match_ratings.match_id
-        WHERE bluedef = {$pId} OR blueatk = {$pId} OR redatk = {$pId} OR reddef = {$pId}
+        WHERE bluedef = ? OR blueatk = ? OR redatk = ? OR reddef = ?
         ORDER BY id ASC");
+    $q->execute(array($pId, $pId, $pId, $pId));
     while($row = $q->fetch(PDO::FETCH_ASSOC)) {
         $timestring = date('Y/m/d H:i',strtotime($row['time']));
 
@@ -32,7 +33,6 @@ if (empty($_REQUEST['player_id'])) {
 
     $result = ["atk_history" => $atkList , "def_history" => $defList];
 }
-
 
 echo json_encode($result);
 ?>
