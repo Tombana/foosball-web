@@ -51,3 +51,58 @@
 }
 .loseteam {
 }
+
+.fixedcontainer {
+    box-sizing: border-box;
+    width: 1140px;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.scoreregion {
+    text-align: center;
+}
+
+.scorecircle {
+    height: 500px;
+    width:  500px;
+    background-color: #eee;
+    border-radius: 50%;
+    border-style: solid;
+    border-width: 10px;
+    border-color: #555;
+    display: inline-block;
+    text-align: center;
+}
+
+.scoretext {
+    line-height: 530px;
+    font-size: 350px;
+    font-weight: 800;
+}
+
+.nametable {
+    font-size: 40px;
+    text-align: center;
+    background-color: #fff;
+    border-radius: 8px;
+}
+.namecell {
+    width: 350px;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+
+    background-image: url("../img/foosball_blur.jpg");
+
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
