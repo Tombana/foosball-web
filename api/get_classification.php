@@ -115,8 +115,8 @@ while($row = $q->fetch(PDO::FETCH_ASSOC)) {
     $tbl .= '<td class="' . $blueclass . '">' . $players[$row['bluedef']]['name'] . printElo($row['bluedef_rating'], $row['bluedef_delta']) . '</td>';
     $tbl .= '<td class="' . $blueclass . '">' . $players[$row['blueatk']]['name'] . printElo($row['blueatk_rating'], $row['blueatk_delta']) . '</td>';
     $tbl .= '<td class="text-center">' . $row['scoreblue'] . '-' . $row['scorered'] . '</td>';
-    $tbl .= '<td class="' . $redclass . '">' . $players[$row['redatk']]['name'] . printElo($row['reddef_rating'], $row['reddef_delta']) . '</td>';
-    $tbl .= '<td class="' . $redclass . '">' . $players[$row['reddef']]['name'] . printElo($row['redatk_rating'], $row['redatk_delta']) . '</td>';
+    $tbl .= '<td class="' . $redclass . '">' . $players[$row['redatk']]['name'] . printElo($row['redatk_rating'], $row['redatk_delta']) . '</td>';
+    $tbl .= '<td class="' . $redclass . '">' . $players[$row['reddef']]['name'] . printElo($row['reddef_rating'], $row['reddef_delta']) . '</td>';
     //(<%= m.elos[0].to_s + (if m.elodiffs[0] >= 0 then "+" else "" end) + m.elodiffs[0].to_s %>)
     $tbl .= sprintf('<td class="text-center"> %02d:%02d</td>', floor($row['duration']/60) , $row['duration'] % 60);
     $tbl .= '<td class="text-center">-</td>';
