@@ -2,9 +2,9 @@
 header("Content-Type: application/json; charset=UTF-8");
 require 'db.php';
 
-$allpositions = ["bluedef", "blueatk", "redatk", "reddef"];
+$allpositions = array("bluedef", "blueatk", "redatk", "reddef");
 
-$result = [];
+$result = array();
 $result['affectedrows'] = 0;
 
 foreach ($allpositions as $position) {

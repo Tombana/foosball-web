@@ -3,14 +3,14 @@ header("Content-Type: application/json; charset=UTF-8");
 require 'db.php';
 
 if( empty($_REQUEST['name'])) {
-    $result = ['result' => "Invalid request!"];
+    $result = array('result' => "Invalid request!");
 } else {
     $name = trim($_REQUEST['name']);
 
     $stmnt = $pdo->prepare("SELECT * FROM players WHERE lower(name) = ?");
     $stmnt->execute(array(strtolower($name)));
     if ($row = $stmnt->fetch()){
-        $result = ['result' => "A player with the name '{$row['name']}' already exists!"];
+        $result = array('result' => "A player with the name '{$row['name']}' already exists!");
     } else {
         $stmnt = $pdo->prepare("INSERT INTO players (name) VALUES (?)");
         if($stmnt->execute(array($name)) ){
@@ -23,12 +23,12 @@ if( empty($_REQUEST['name'])) {
                 'active')
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             if($stmnt->execute(array($pid,1500.0, 1500.0, 0, 0, 0, 0, false))){
-                $result = ['result' => "Player '{$name}' successfully added!"];
+                $result = array('result' => "Player '{$name}' successfully added!");
             } else {
-                $result = ['result' => "An error occurred when adding ratings for '{$name}'."];
+                $result = array('result' => "An error occurred when adding ratings for '{$name}'.");
             }
         } else {
-            $result = ['result' => "An error occurred when adding '{$name}'."];
+            $result = array('result' => "An error occurred when adding '{$name}'.");
         }
     }
 }

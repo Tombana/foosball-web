@@ -15,14 +15,14 @@ $result->bestdefenders = "";
 $result->bluewins = 0;
 $result->redwins = 0;
 $result->playerlist = "";
-$result->playerpositions = [];
+$result->playerpositions = array();
 $result->recentmatches = "";
 
 // "playerlist":
 $q = $pdo->query('SELECT id,name,atk_rating,def_rating,num_matches,matches_won,atk_matches,def_matches,active FROM players INNER JOIN player_ratings on players.id = player_ratings.player_id ORDER BY name ASC');
 
-$players = [];
-$abcPlayerIds = [];
+$players = array();
+$abcPlayerIds = array();
 while($row = $q->fetch(PDO::FETCH_ASSOC)) {
     $players[$row['id']] = $row;
     $abcPlayerIds[] = $row['id'];

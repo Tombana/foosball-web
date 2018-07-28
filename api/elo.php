@@ -28,9 +28,9 @@ function setPlayerDefaults(& $p) {
 
 function fullAnalysis($allmatches, $playerids, $pdo) {
 
-    $players = [];
+    $players = array();
     foreach($playerids as $pid) {
-        $players[$pid] = [];
+        $players[$pid] = array();
         $players[$pid]['player_id'] = $pid;
         setPlayerDefaults($players[$pid]);
     }
@@ -38,11 +38,11 @@ function fullAnalysis($allmatches, $playerids, $pdo) {
     $bluewins = 0;
     $redwins = 0;
 
-    $teams = ['blue', 'red'];
-    $roles = ['atk', 'def'];
+    $teams = array('blue', 'red');
+    $roles = array('atk', 'def');
     //$allpositions = ["bluedef", "blueatk", "redatk", "reddef"];
 
-    $match_ratings = [];
+    $match_ratings = array();
     foreach($allmatches as $match) {
         $id = $match['id'];
         $rating = & $match_ratings[$id];

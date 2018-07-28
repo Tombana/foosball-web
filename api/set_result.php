@@ -38,14 +38,14 @@ function getRatingsFromId($pdo, $pid) {
         return $row;
     }
     // Return default values
-    return ['player_id' => $pid,
+    return array('player_id' => $pid,
         'atk_rating' => 1500.0,
         'def_rating' => 1500.0,
         'num_matches' => 0,
         'matches_won' => 0,
         'atk_matches' => 0,
         'def_matches' => 0,
-        'active' => true];
+        'active' => true);
 }
 
 // Map scores to a number in [0,1]
@@ -62,7 +62,7 @@ function scoreToValue($scoreblue, $scorered) {
 
 function process($data) {
     if ($data == NULL) {
-        return ['result' => "Invalid request. JSON format expected."];
+        return array('result' => "Invalid request. JSON format expected.");
     }
 
     if (!file_exists("../db/results")) {
@@ -80,12 +80,12 @@ function process($data) {
         || count($data['players']) != 4
         || empty($data['start'])
         || empty($data['end']) ) {
-        return ['result' => 'Invalid request. "type" : "quickmatch" expected.'];
+        return array('result' => 'Invalid request. "type" : "quickmatch" expected.');
     }
 
     require 'db.php';
 
-    $dbValues = [
+    $dbValues = array( 
         ":bluedef" => getPlayerFromName($pdo, $data['players'][0]),
         ":blueatk" => getPlayerFromName($pdo, $data['players'][1]),
         ":redatk"  => getPlayerFromName($pdo, $data['players'][2]),
@@ -95,7 +95,7 @@ function process($data) {
         ":time" => date(DATE_RFC3339, $data['start']),
         ":duration" => ($data['end'] - $data['start']),
         ":season_id" => 1
-    ];
+    );
 
     $stmnt = $pdo->prepare("INSERT INTO matches
         ('bluedef','blueatk','redatk','reddef',
@@ -104,7 +104,7 @@ function process($data) {
         :scoreblue, :scorered, :time, :duration, :season_id)");
 
     if ($stmnt == false) {
-        return ['result' => "PDO ERROR.", 'PDO' => $pdo->errorInfo() ];
+        return array('result' => "PDO ERROR.", 'PDO' => $pdo->errorInfo());
     }
 
     $stmnt->execute($dbValues);
@@ -115,9 +115,9 @@ function process($data) {
         foreach($data['replays'] as $r) {
             $stmnt = $pdo->prepare("INSERT INTO replays ('url','time','match_id') VALUES (:url, :time, :match_id)");
             if ($stmnt == false) {
-                return ['result' => "PDO ERROR.", 'PDO' => $pdo->errorInfo() ];
+                return array('result' => "PDO ERROR.", 'PDO' => $pdo->errorInfo() );
             }
-            $stmnt->execute([':url' => $r['url'], ':time' => date(DATE_RFC3339, $r['time']), ':match_id' => $matchid]);
+            $stmnt->execute(array(':url' => $r['url'], ':time' => date(DATE_RFC3339, $r['time']), ':match_id' => $matchid));
         }
     }
 
@@ -127,16 +127,16 @@ function process($data) {
 
     // Get current ratings
     // player_id,atk_rating,def_rating,num_matches,matches_won,atk_matches,def_matches,active
-    $playerratings = [
+    $playerratings = array(
         'bluedef' => getRatingsFromId($pdo, $dbValues[':bluedef']),
         'blueatk' => getRatingsFromId($pdo, $dbValues[':blueatk']),
         'redatk'  => getRatingsFromId($pdo, $dbValues[':redatk']),
         'reddef'  => getRatingsFromId($pdo, $dbValues[':reddef'])
-    ];
+    );
 
-    $matchrating = [];
+    $matchrating = array();
 
-    $won = ['blue' => 0, 'red' => 0];
+    $won = array('blue' => 0, 'red' => 0);
 
     if ($dbValues[':scoreblue'] > $dbValues[':scorered'] ) {
         $won['blue']++;
@@ -147,8 +147,8 @@ function process($data) {
         $pdo->exec("UPDATE statistics SET value = value + 1 WHERE key = 'redwins'");
     }
 
-    $teams = ['blue', 'red'];
-    $roles = ['atk', 'def'];
+    $teams = array('blue', 'red');
+    $roles = array('atk', 'def');
     foreach($teams as $team) {
         foreach($roles as $role) {
             $pr = & $playerratings[$team . $role];
@@ -206,7 +206,7 @@ function process($data) {
         }
     }
 
-    return ['result' => "Match processed successfully."];
+    return array('result' => "Match processed successfully.");
 }
 
 
