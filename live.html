@@ -15,7 +15,7 @@
     <div class="fixedcontainer">
 
       <div style="height:100px;"></div>
-
+<!--Name table-->
       <div class="nametable">
         <table class="table">
           <tr>
@@ -39,12 +39,27 @@
         </table>
       </div>
 
-      <div style="height:100px;"></div>
-
-      <div class="scoreregion">
-        <div class="scorecircle"><span class="scoretext blueteam" id="scoreblue">8</span></div>
-        <span style="display:inline-block;width:80px;"></span>
-        <div class="scorecircle"><span class="scoretext redteam" id="scorered">3</span></div>
+      <div style="height:50px;"></div>
+<!--Score circles-->
+      <div class="scoretable">
+          <table cellspacing="10" cellpadding="20">
+              <tr>
+                  <th class="text-left" style="text-align:left"><a class="buttonB" role="button" id="scoredBlue"><span aria-hidden="true">[a] BLUE+</span></a></th>
+                  <th colspan="2"></th>
+                  <th  rowspan="2" style="text-align:center;padding-left:0px;padding-right:0px;padding-top:0px;">
+                      <div class="scorecircle"><span class="scoretext blueteam" id="scoreblue">0</span></div>
+                      <span style="display:inline-block;width:80px;"></span>
+                      <div class="scorecircle"><span class="scoretext redteam" id="scorered">0</span></div>
+                  </th>
+                  <th colspan="2"></th>
+                  <th class="text-right" style="text-align:right"><a class="buttonR" role="button" id="scoredRed"><span aria-hidden="true">[k] RED+</span></a></th>
+              </tr>
+              <tr>
+                  <th class="text-left" style="text-align:left"><a class="buttonBmini" role="button" id="scoredBluemin"><span aria-hidden="true">[z] BLUE-</span></a></th>
+                  <th colspan="5"></th>
+                  <th class="text-right" style="text-align:right"><a class="buttonRmini" role="button" id="scoredRedmin"><span aria-hidden="true">[m] RED-</span></a></th>
+              </tr>
+          </table>
       </div>
     </div>
 
