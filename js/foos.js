@@ -76,6 +76,7 @@ function load_season_section(season_id) {
     season_title = $(".season-selector[data-season-id=" + season_id + "]").text();
     $("#season-selected").text(season_title);
 
+    
     $.getJSON( 'api/get_classification.php?season_id=' + season_id, function( data ) {
         // JSON arrays become normal javascript arrays
         // JSON key-value-pairs become javascript objects
