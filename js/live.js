@@ -1,3 +1,6 @@
+var dateS = new Date();
+var start_time;
+
 function startup() {
 
   $.getJSON( 'api/get_players.php', function( data ) {
@@ -7,6 +10,9 @@ function startup() {
     $('#reddef').html(data['reddef']);
   });
 
+//  setInterval(increaseScore, 500);
+    start_time = dateS.getTime(); // in MILISECONDS since 01.01.1970 00:00:00
+    
   $("#scoredBlue").click(increaseScoreBlue);
   $("#scoredRed").click(increaseScoreRed);
   $("#scoredBluemin").click(decreaseScoreBlue);
@@ -22,7 +28,6 @@ function startup() {
 
   initBalltracker();
 
-  //  setInterval(increaseScore, 500);
 }
 
 function initBalltracker() {
@@ -51,25 +56,23 @@ function initBalltracker() {
 }
 
 $(document).bind('keydown',function(e){
+//                 Keycodes: https://css-tricks.com/snippets/javascript/javascript-keycodes/
         if(e.keyCode == 65) {
             increaseScoreBlue();
         }
-});
-$(document).bind('keydown',function(e){
                  if(e.keyCode == 75) {
                  increaseScoreRed();
                  }
-                 });
-$(document).bind('keydown',function(e){
                  if(e.keyCode == 90) {
                  decreaseScoreBlue();
                  }
-                 });
-$(document).bind('keydown',function(e){
                  if(e.keyCode == 77) {
                  decreaseScoreRed();
                  }
-                 });
+
+});
+
+
 
 
 function increaseScore() {
@@ -90,12 +93,11 @@ function increaseScoreBlue() {
         s.html(8);
         t.html(8);
     }
-
-    sounds.bluescores.play();
-
-//    if (b==10)
-//        ADD GAME RESULT TO THE DB
-//    link to go back to index: window.location.href="index.html";
+sounds.bluescores.play();
+    if (b==10){
+        endgame();
+        window.location.href="index.html";
+    }
 }
 function increaseScoreRed() {
     var s = ($('#scoreblue'));
@@ -108,8 +110,11 @@ function increaseScoreRed() {
         s.html(8);
         t.html(8);
     }
-
-    sounds.redscores.play();
+sounds.redscores.play();
+    if (r==10){
+        endgame();
+        window.location.href="index.html";
+    }
 }
 function decreaseScoreBlue() {
     var s = ($('#scoreblue'));
@@ -124,9 +129,20 @@ function decreaseScoreRed() {
         s.html(a-1);
 }
 
-//function endgame(bluedef, blueatk, reddef, redatk, bluescore, redscore){
-//
-//}
+function endgame(){
+    var dateE = new Date();
+    var end_time = dateE.getTime();
+    var result = {};
+    result["type"] = "quickmatch";
+    result["players"] = [$('#bluedef').html(), $('#blueatk').html(), $('#redatk').html(), $('#reddef').html()];
+    result["results"] = [parseInt($('#scoreblue').html()), parseInt($('#scorered').html())];
+    result["start"] = Math.floor(start_time/1000);// time in SECONDS
+    result["end"] = Math.floor(end_time/1000);// time in SECONDS
+    console.log(result);
+    console.log(JSON.stringify(result));
+    $.ajax('api/set_result.php',{ data: JSON.stringify(result),
+           contentType : 'application/json', type:'POST'});
+}
 
  
 $(document).ready(startup)

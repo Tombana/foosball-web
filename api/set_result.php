@@ -7,6 +7,7 @@ header("Content-Type: application/json; charset=UTF-8");
 // "start" => time
 // "end" => time
 // "replays => [...]
+    // time is in SECONDS since 01.01.1970 00:00:00
 
 function getPlayerFromName($pdo, $name) {
     $q = $pdo->prepare("SELECT id FROM players WHERE name=?");
@@ -85,7 +86,8 @@ function process($data) {
 
     require 'db.php';
 
-    $dbValues = array( 
+//                       data "format"----------------------
+    $dbValues = array(
         ":bluedef" => getPlayerFromName($pdo, $data['players'][0]),
         ":blueatk" => getPlayerFromName($pdo, $data['players'][1]),
         ":redatk"  => getPlayerFromName($pdo, $data['players'][2]),
