@@ -8,17 +8,51 @@ function startup() {
     $('#bluedef').html(data['bluedef']);
     $('#redatk').html(data['redatk']);
     $('#reddef').html(data['reddef']);
-
   });
-    
-    $("#scoredBlue").click(increaseScoreBlue);
-    $("#scoredRed").click(increaseScoreRed);
-    $("#scoredBluemin").click(decreaseScoreBlue);
-    $("#scoredRedmin").click(decreaseScoreRed);
 
 //  setInterval(increaseScore, 500);
     start_time = dateS.getTime(); // in MILISECONDS since 01.01.1970 00:00:00
     
+  $("#scoredBlue").click(increaseScoreBlue);
+  $("#scoredRed").click(increaseScoreRed);
+  $("#scoredBluemin").click(decreaseScoreBlue);
+  $("#scoredRedmin").click(decreaseScoreRed);
+
+  // Load all sound files
+  sounds = { ballreset  : new Audio('sounds/BallReset.wav'),
+             bluescores : new Audio('sounds/goal_blue/blue_team_scores.wav'),
+             redscores  : new Audio('sounds/goal_red/red_team_scores.wav')
+  };
+
+  sounds.ballreset.play();
+
+  initBalltracker();
+
+}
+
+function initBalltracker() {
+  // Open a connection to the Balltracking program
+  var ws = new WebSocket("ws://localhost:8420/");
+
+  ws.onopen = function() {
+    console.log("Connected to balltracker.");
+    ws.send("Hello balltracker, how are you?");
+  }
+
+  ws.onmessage = function (event) {
+    console.log("Message from balltracker: " + event.data);
+    if (event.data == "BG") { // Blue Goal
+      increaseScoreBlue();
+    }
+    if (event.data == "RG") { // Red Goal
+      increaseScoreRed();
+    }
+  };
+
+  ws.onerror = function(e) {
+    console.log("Websocket error. Balltracker is probably not running. Error information:");
+    console.log(e);
+  }
 }
 
 $(document).bind('keydown',function(e){
@@ -59,6 +93,7 @@ function increaseScoreBlue() {
         s.html(8);
         t.html(8);
     }
+sounds.bluescores.play();
     if (b==10){
         endgame();
         window.location.href="index.html";
@@ -75,6 +110,7 @@ function increaseScoreRed() {
         s.html(8);
         t.html(8);
     }
+sounds.redscores.play();
     if (r==10){
         endgame();
         window.location.href="index.html";
