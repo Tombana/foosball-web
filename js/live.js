@@ -5,15 +5,41 @@ function startup() {
     $('#bluedef').html(data['bluedef']);
     $('#redatk').html(data['redatk']);
     $('#reddef').html(data['reddef']);
-
   });
-    
-    $("#scoredBlue").click(increaseScoreBlue);
-    $("#scoredRed").click(increaseScoreRed);
-    $("#scoredBluemin").click(decreaseScoreBlue);
-    $("#scoredRedmin").click(decreaseScoreRed);
 
-//  setInterval(increaseScore, 500);
+  $("#scoredBlue").click(increaseScoreBlue);
+  $("#scoredRed").click(increaseScoreRed);
+  $("#scoredBluemin").click(decreaseScoreBlue);
+  $("#scoredRedmin").click(decreaseScoreRed);
+
+  initBalltracker();
+
+  //  setInterval(increaseScore, 500);
+}
+
+function initBalltracker() {
+  // Open a connection to the Balltracking program
+  var ws = new WebSocket("ws://localhost:8420/");
+
+  ws.onopen = function() {
+    console.log("Connected to balltracker.");
+    ws.send("Hello balltracker, how are you?");
+  }
+
+  ws.onmessage = function (event) {
+    console.log("Message from balltracker: " + event.data);
+    if (event.data == "BG") { // Blue Goal
+      increaseScoreBlue();
+    }
+    if (event.data == "RG") { // Red Goal
+      increaseScoreRed();
+    }
+  };
+
+  ws.onerror = function(e) {
+    console.log("Websocket error. Balltracker is probably not running. Error information:");
+    console.log(e);
+  }
 }
 
 $(document).bind('keydown',function(e){
