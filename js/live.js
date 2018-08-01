@@ -138,10 +138,8 @@ function endgame(){
     result["results"] = [parseInt($('#scoreblue').html()), parseInt($('#scorered').html())];
     result["start"] = Math.floor(start_time/1000);// time in SECONDS
     result["end"] = Math.floor(end_time/1000);// time in SECONDS
-    console.log(result);
-    console.log(JSON.stringify(result));
-    $.ajax('api/set_result.php',{ data: JSON.stringify(result),
-           contentType : 'application/json', type:'POST'});
+    var res = $.ajax('api/set_result.php',{ data: JSON.stringify(result),
+                     contentType : 'application/json', type:'POST', async: false});
 }
 
  
