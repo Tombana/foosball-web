@@ -12,6 +12,14 @@ function startup() {
   $("#scoredBluemin").click(decreaseScoreBlue);
   $("#scoredRedmin").click(decreaseScoreRed);
 
+  // Load all sound files
+  sounds = { ballreset  : new Audio('sounds/BallReset.wav'),
+             bluescores : new Audio('sounds/goal_blue/blue_team_scores.wav'),
+             redscores  : new Audio('sounds/goal_red/red_team_scores.wav')
+  };
+
+  sounds.ballreset.play();
+
   initBalltracker();
 
   //  setInterval(increaseScore, 500);
@@ -82,6 +90,9 @@ function increaseScoreBlue() {
         s.html(8);
         t.html(8);
     }
+
+    sounds.bluescores.play();
+
 //    if (b==10)
 //        ADD GAME RESULT TO THE DB
 //    link to go back to index: window.location.href="index.html";
@@ -97,6 +108,8 @@ function increaseScoreRed() {
         s.html(8);
         t.html(8);
     }
+
+    sounds.redscores.play();
 }
 function decreaseScoreBlue() {
     var s = ($('#scoreblue'));
