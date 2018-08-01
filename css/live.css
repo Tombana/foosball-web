@@ -1,6 +1,52 @@
 .blueteam {
     color: #337ab7;
 }
+
+.buttonB {
+    background-color: #008CBA; /* Blue */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 30px;
+}
+
+.buttonR {
+    background-color: #f44336; /* Red */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 30px;
+}
+
+.buttonBmini {
+    background-color: #008CBA; /* Blue */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 20px;
+}
+
+.buttonRmini {
+    background-color: #f44336; /* Red */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 20px;
+}
+
+
 .redteam {
     color: #d9534f;
 }
@@ -18,9 +64,10 @@
     text-align: center;
 }
 
+
 .scorecircle {
-    height: 500px;
-    width:  500px;
+    height: 220px;
+    width:  220px;
     background-color: #eee;
     border-radius: 50%;
     border-style: solid;
@@ -31,19 +78,33 @@
 }
 
 .scoretext {
-    line-height: 530px;
-    font-size: 350px;
+    line-height: 180px;
+    font-size: 150px;
     font-weight: 800;
 }
 
+.scoretable {
+    font-size: 30px;
+    border: none;
+}
+
+
 .nametable {
-    font-size: 40px;
+    font-size: 30px;
     text-align: center;
     background-color: #fff;
     border-radius: 8px;
 }
 .namecell {
     width: 350px;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
 }
 
 html {
