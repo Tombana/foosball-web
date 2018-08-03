@@ -11,6 +11,22 @@ function startup() {
     $('#redatk').change(  function() { set_player('redatk',  $('#redatk').val()); elo_prediction(); } );
     $('#reddef').change(  function() { set_player('reddef',  $('#reddef').val()); elo_prediction(); } );
 
+    // Hide start button
+    // Only show it when connected to the balltracking system
+    $('#btnstartgame').hide();
+    initBalltracker(
+        function() { // onOpen
+            console.log("Connected to balltracker!");
+            $('#btnstartgame').show();
+        },
+        function (e) { // onError
+            console.log("Could not connct to balltracker!");
+        },
+        function (event) { // onMessage
+            console.log("Message from balltracker: " + event.data);
+        }
+    );
+
     $('#eloModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget) // Button that triggered the modal
         var pId = button.data('playerid');

@@ -1,86 +1,79 @@
-var dateS = new Date();
 var start_time;
+var sounds;
 
 function startup() {
+    // Load player names
+    $.getJSON( 'api/get_players.php', function( data ) {
+        $('#blueatk').html(data['blueatk']);
+        $('#bluedef').html(data['bluedef']);
+        $('#redatk').html(data['redatk']);
+        $('#reddef').html(data['reddef']);
+    });
 
-  $.getJSON( 'api/get_players.php', function( data ) {
-    $('#blueatk').html(data['blueatk']);
-    $('#bluedef').html(data['bluedef']);
-    $('#redatk').html(data['redatk']);
-    $('#reddef').html(data['reddef']);
-  });
+    // Initialize buttons
+    $("#scoredBlue").click(increaseScoreBlue);
+    $("#scoredRed").click(increaseScoreRed);
+    $("#scoredBluemin").click(decreaseScoreBlue);
+    $("#scoredRedmin").click(decreaseScoreRed);
 
-//  setInterval(increaseScore, 500);
+    // Load all sound files
+    sounds = { ballreset  : new Audio('sounds/BallReset.wav'),
+        bluescores : new Audio('sounds/goal_blue/blue_team_scores.wav'),
+        redscores  : new Audio('sounds/goal_red/red_team_scores.wav')
+    };
+
+    // Connect to balltracking system
+    // and start camera when connected
+    initBalltracker(
+        function() { // onOpen
+            console.log("Connected to balltracker!");
+            startCamera();
+
+            // Send heartbeat every 2 s
+            setInterval( function() {
+                if (websocket.readyState == websocket.OPEN)
+                    websocket.send("heartbeat");
+            },
+            2000);
+        },
+        function (e) { // onError
+            console.log("Could not connct to balltracker! Error information:");
+            console.log(e);
+        },
+        function (event) { // onMessage
+            console.log("Message from balltracker: " + event.data);
+            if (event.data == "BG") { // Blue Goal
+                increaseScoreBlue();
+            }
+            if (event.data == "RG") { // Red Goal
+                increaseScoreRed();
+            }
+        }
+    );
+
+    // Play "Ball Reset" sound
+    sounds.ballreset.play();
+
+    // Set start time
+    var dateS = new Date();
     start_time = dateS.getTime(); // in MILISECONDS since 01.01.1970 00:00:00
-    
-  $("#scoredBlue").click(increaseScoreBlue);
-  $("#scoredRed").click(increaseScoreRed);
-  $("#scoredBluemin").click(decreaseScoreBlue);
-  $("#scoredRedmin").click(decreaseScoreRed);
-
-  // Load all sound files
-  sounds = { ballreset  : new Audio('sounds/BallReset.wav'),
-             bluescores : new Audio('sounds/goal_blue/blue_team_scores.wav'),
-             redscores  : new Audio('sounds/goal_red/red_team_scores.wav')
-  };
-
-  sounds.ballreset.play();
-
-  initBalltracker();
-
-}
-
-function initBalltracker() {
-  // Open a connection to the Balltracking program
-  var ws = new WebSocket("ws://localhost:8420/");
-
-  ws.onopen = function() {
-    console.log("Connected to balltracker.");
-    ws.send("Hello balltracker, how are you?");
-  }
-
-  ws.onmessage = function (event) {
-    console.log("Message from balltracker: " + event.data);
-    if (event.data == "BG") { // Blue Goal
-      increaseScoreBlue();
-    }
-    if (event.data == "RG") { // Red Goal
-      increaseScoreRed();
-    }
-  };
-
-  ws.onerror = function(e) {
-    console.log("Websocket error. Balltracker is probably not running. Error information:");
-    console.log(e);
-  }
 }
 
 $(document).bind('keydown',function(e){
-//                 Keycodes: https://css-tricks.com/snippets/javascript/javascript-keycodes/
-        if(e.keyCode == 65) {
-            increaseScoreBlue();
-        }
-                 if(e.keyCode == 75) {
-                 increaseScoreRed();
-                 }
-                 if(e.keyCode == 90) {
-                 decreaseScoreBlue();
-                 }
-                 if(e.keyCode == 77) {
-                 decreaseScoreRed();
-                 }
-
+    // Keycodes: https://css-tricks.com/snippets/javascript/javascript-keycodes/
+    if(e.keyCode == 65) {
+        increaseScoreBlue();
+    }
+    if(e.keyCode == 75) {
+        increaseScoreRed();
+    }
+    if(e.keyCode == 90) {
+        decreaseScoreBlue();
+    }
+    if(e.keyCode == 77) {
+        decreaseScoreRed();
+    }
 });
-
-
-
-
-function increaseScore() {
-  var r = Math.random() >= 0.5;
-  var s = r ? ($('#scorered')) : ($('#scoreblue'));
-  var a = parseInt(s.html());
-  s.html(a+1);
-}
 
 function increaseScoreBlue() {
     var s = ($('#scoreblue'));
@@ -93,12 +86,17 @@ function increaseScoreBlue() {
         s.html(8);
         t.html(8);
     }
-sounds.bluescores.play();
+
+    sounds.bluescores.play();
+    showReplay();
+
     if (b==10){
         endgame();
-        window.location.href="index.html";
+        // TODO: Sleep about 5 seconds before going back to main page
+        //window.location.href="index.html";
     }
 }
+
 function increaseScoreRed() {
     var s = ($('#scoreblue'));
     var t = ($('#scorered'));
@@ -110,12 +108,17 @@ function increaseScoreRed() {
         s.html(8);
         t.html(8);
     }
-sounds.redscores.play();
+    sounds.redscores.play();
+    if (websocket.readyState == websocket.OPEN)
+        websocket.send("replay");
+
     if (r==10){
         endgame();
-        window.location.href="index.html";
+        // TODO: Sleep about 5 seconds before going back to main page
+        //    window.location.href="index.html";
     }
 }
+
 function decreaseScoreBlue() {
     var s = ($('#scoreblue'));
     var a = parseInt(s.html());
@@ -139,8 +142,7 @@ function endgame(){
     result["start"] = Math.floor(start_time/1000);// time in SECONDS
     result["end"] = Math.floor(end_time/1000);// time in SECONDS
     var res = $.ajax('api/set_result.php',{ data: JSON.stringify(result),
-                     contentType : 'application/json', type:'POST', async: false});
+        contentType : 'application/json', type:'POST', async: false});
 }
 
- 
 $(document).ready(startup)
