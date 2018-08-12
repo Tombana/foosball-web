@@ -19,7 +19,10 @@ function startup() {
     // Load all sound files
     sounds = { ballreset  : new Audio('sounds/BallReset.wav'),
         bluescores : new Audio('sounds/goal_blue/blue_team_scores.wav'),
-        redscores  : new Audio('sounds/goal_red/red_team_scores.wav')
+        redscores  : new Audio('sounds/goal_red/red_team_scores.wav'),
+        nicecatch  : new Audio('sounds/blocks_saves/nicecatch.wav'),
+        narrowlyaverted : new Audio('sounds/blocks_saves/Narrowly_Averted.wav'),
+        woopwoop   : new Audio('sounds/woop_woop.wav')
     };
 
     // Connect to balltracking system
@@ -48,6 +51,9 @@ function startup() {
             if (event.data == "RG") { // Red Goal
                 increaseScoreRed();
             }
+            if (event.data == "FAST") { // Fast ball ?
+                sounds.woopwoop.play();
+            }
         }
     );
 
@@ -57,6 +63,8 @@ function startup() {
     // Set start time
     var dateS = new Date();
     start_time = dateS.getTime(); // in MILISECONDS since 01.01.1970 00:00:00
+
+    console.log("Starting time: " + dateS.toTimeString());
 }
 
 $(document).bind('keydown',function(e){
