@@ -1,6 +1,10 @@
 var start_time;
 var sounds;
 
+function randomChoice(arr) {
+    return arr[Math.floor(arr.length * Math.random())];
+}
+
 function startup() {
     // Load player names
     $.getJSON( 'api/get_players.php', function( data ) {
@@ -53,6 +57,9 @@ function startup() {
             }
             if (event.data == "FAST") { // Fast ball ?
                 sounds.woopwoop.play();
+            }
+            if (event.data == "SAVE") { // Save by defense
+                randomChoice( [sounds.nicecatch , sounds.narrowlyaverted] ).play();
             }
         }
     );
