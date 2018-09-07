@@ -1,6 +1,9 @@
 var start_time;
 var sounds;
 
+var redScore;
+var blueScore;
+
 function randomChoice(arr) {
     return arr[Math.floor(arr.length * Math.random())];
 }
@@ -64,6 +67,10 @@ function startup() {
         }
     );
 
+    blueScore = 0;
+    redScore = 0;
+    updateScore();
+
     // Play "Ball Reset" sound
     sounds.ballreset.play();
 
@@ -72,6 +79,11 @@ function startup() {
     start_time = dateS.getTime(); // in MILISECONDS since 01.01.1970 00:00:00
 
     console.log("Starting time: " + dateS.toTimeString());
+}
+
+function updateScore() {
+    $('#scoreblue').html(blueScore);
+    $('#scorered').html(redScore);
 }
 
 $(document).bind('keydown',function(e){
@@ -91,73 +103,63 @@ $(document).bind('keydown',function(e){
 });
 
 function increaseScoreBlue() {
-    var s = ($('#scoreblue'));
-    var t = ($('#scorered'));
-    var a = parseInt(s.html());
-    s.html(a+1);
-    var b = parseInt(s.html());
-    var r = parseInt(t.html());
-    if (b==9 && r==9){
-        s.html(8);
-        t.html(8);
-    }
+    blueScore++;
+    updateScore();
 
     sounds.bluescores.play();
     showReplay();
 
-    if (b==10){
+    if (blueScore >= 10 && blueScore - redScore >= 2){
         endgame();
-        // TODO: Sleep about 5 seconds before going back to main page
-        //window.location.href="index.html";
     }
 }
 
 function increaseScoreRed() {
-    var s = ($('#scoreblue'));
-    var t = ($('#scorered'));
-    var a = parseInt(t.html());
-    t.html(a+1);
-    var b = parseInt(s.html());
-    var r = parseInt(t.html());
-    if (b==9 && r==9){
-        s.html(8);
-        t.html(8);
-    }
-    sounds.redscores.play();
-    if (websocket.readyState == websocket.OPEN)
-        websocket.send("replay");
+    redScore++;
+    updateScore();
 
-    if (r==10){
+    sounds.redscores.play();
+    showReplay();
+
+    if (redScore >= 10 && redScore - blueScore >= 2){
         endgame();
-        // TODO: Sleep about 5 seconds before going back to main page
-        //    window.location.href="index.html";
     }
 }
 
 function decreaseScoreBlue() {
-    var s = ($('#scoreblue'));
-    var a = parseInt(s.html());
-    if (a > 0)
-        s.html(a-1);
+    if (blueScore > 0)
+        blueScore--;
+    updateScore();
 }
 function decreaseScoreRed() {
-    var s = ($('#scorered'));
-    var a = parseInt(s.html());
-    if (a > 0)
-        s.html(a-1);
+    if (redScore > 0)
+        redScore--;
+    updateScore();
 }
 
 function endgame(){
-    var dateE = new Date();
-    var end_time = dateE.getTime();
-    var result = {};
-    result["type"] = "quickmatch";
-    result["players"] = [$('#bluedef').html(), $('#blueatk').html(), $('#redatk').html(), $('#reddef').html()];
-    result["results"] = [parseInt($('#scoreblue').html()), parseInt($('#scorered').html())];
-    result["start"] = Math.floor(start_time/1000);// time in SECONDS
-    result["end"] = Math.floor(end_time/1000);// time in SECONDS
-    var res = $.ajax('api/set_result.php',{ data: JSON.stringify(result),
-        contentType : 'application/json', type:'POST', async: false});
+    $('#message').html("Uploading result in 2 seconds...");
+    setTimeout(function() {
+        // Check if the user did not change the score back!
+        if ((blueScore < 10 && redScore < 10) || Math.abs(blueScore - redScore) < 2) {
+            $('#message').html("Upload cancelled!");
+        } else {
+            var dateE = new Date();
+            var end_time = dateE.getTime();
+            var result = {};
+            result["type"] = "quickmatch";
+            result["players"] = [$('#bluedef').html(), $('#blueatk').html(), $('#redatk').html(), $('#reddef').html()];
+            result["results"] = [blueScore, redScore];
+            result["start"] = Math.floor(start_time/1000);// time in SECONDS
+            result["end"] = Math.floor(end_time/1000);// time in SECONDS
+            var res = $.ajax('api/set_result.php',{ data: JSON.stringify(result),
+                contentType : 'application/json', type:'POST', async: false});
+            $('#message').html("Uploading...");
+            setTimeout(function() {
+                window.location.href="index.html";
+            }, 1000);
+        }
+    }, 2000);
 }
 
 $(document).ready(startup)
