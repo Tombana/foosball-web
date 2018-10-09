@@ -6,14 +6,14 @@ require 'db.php';
 
 // Map scores to a number in [0,1]
 function scoreToValue($scoreblue, $scorered) {
-    if ($scoreblue == $scorered)
-        return 0.5;
+    //if ($scoreblue == $scorered)
+    //    return 0.5;
 
-    if ($scoreblue < $scorered)
-        return $scoreblue / 20.0;
-    else
-        return 1.0 - $scorered / 20.0;
-    // return $scoreblue / ($scoreblue + $scorered);
+    //if ($scoreblue < $scorered)
+    //    return $scoreblue / 20.0;
+    //else
+    //    return 1.0 - $scorered / 20.0;
+    return $scoreblue / ($scoreblue + $scorered);
 }
 
 function setPlayerDefaults(& $p) {
@@ -129,7 +129,9 @@ function fullAnalysis($allmatches, $playerids, $pdo) {
         }
     }
 
-    $pdo->exec("REPLACE INTO statistics (key,value) VALUES ('bluewins',{$bluewins}), ('redwins',{$redwins})");
+    //$pdo->exec("REPLACE INTO statistics (key,value) VALUES ('bluewins',{$bluewins}), ('redwins',{$redwins})");
+    $pdo->exec("UPDATE statistics SET value = '{$bluewins}' WHERE key = 'bluewins'");
+    $pdo->exec("UPDATE statistics SET value = '{$redwins}' WHERE key = 'redwins'");
 }
 
 
