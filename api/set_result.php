@@ -157,7 +157,11 @@ function process($data) {
             $pr['num_matches']++;
             $pr['matches_won'] += $won[$team];
             $pr['active'] = true;
-            $pr[$role . '_matches']++;
+            $kFactor[$team . $role] = 80.0;
+            if ($pr[$role . '_matches'] < 10) {
+                $kFactor[$team . $role] = 160.0;
+            }
+	    $pr[$role . '_matches']++;
             $matchrating[$team . $role . '_rating'] = $pr[$role . '_rating'];
         }
     }
@@ -171,18 +175,15 @@ function process($data) {
     $gainBlue = $blueRealValue - $blueEloValue;
     $gainRed  = - $gainBlue;
 
-    // TODO: Add individual K factors per player?
-    $kFactor = 80.0;
+    $matchrating['blueatk_delta'] = $kFactor['blueatk'] * $gainBlue;
+    $matchrating['bluedef_delta'] = $kFactor['bluedef'] * $gainBlue;
+    $matchrating['redatk_delta']  = $kFactor['redatk']  * $gainRed;
+    $matchrating['reddef_delta']  = $kFactor['reddef']  * $gainRed;
 
-    $matchrating['blueatk_delta'] = $kFactor * $gainBlue;
-    $matchrating['bluedef_delta'] = $kFactor * $gainBlue;
-    $matchrating['redatk_delta']  = $kFactor * $gainRed;
-    $matchrating['reddef_delta']  = $kFactor * $gainRed;
-
-    $playerratings['blueatk']['atk_rating'] += $kFactor * $gainBlue;
-    $playerratings['bluedef']['def_rating'] += $kFactor * $gainBlue;
-    $playerratings['redatk']['atk_rating']  += $kFactor * $gainRed;
-    $playerratings['reddef']['def_rating']  += $kFactor * $gainRed;
+    $playerratings['blueatk']['atk_rating'] += $kFactor['blueatk']* $gainBlue;
+    $playerratings['bluedef']['def_rating'] += $kFactor['bluedef']* $gainBlue;
+    $playerratings['redatk']['atk_rating']  += $kFactor['redatk'] * $gainRed;
+    $playerratings['reddef']['def_rating']  += $kFactor['reddef'] * $gainRed;
 
     $stmnt = $pdo->prepare("INSERT INTO 'match_ratings' ('match_id',
         'bluedef_rating','bluedef_delta','blueatk_rating','blueatk_delta',

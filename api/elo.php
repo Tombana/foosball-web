@@ -62,6 +62,10 @@ function fullAnalysis($allmatches, $playerids, $pdo) {
                 $players[$player_id]['num_matches']++;
                 $players[$player_id]['matches_won'] += $won[$team];
                 $players[$player_id]['last_match_date'] = strtotime($match['time']);
+                $kFactor[$player_id] = 80.0;
+                if ($players[$player_id][$role . '_matches'] < 10) {
+                        $kFactor[$player_id] = 160.0;
+                }
                 $players[$player_id][$role . '_matches']++;
                 $rating[$team . $role . '_rating'] = $players[$player_id][$role . '_rating'];
             }
@@ -81,18 +85,15 @@ function fullAnalysis($allmatches, $playerids, $pdo) {
         $gainBlue = $blueRealValue - $blueEloValue;
         $gainRed  = - $gainBlue;
 
-        // TODO: Add individual K factors per player?
-        $kFactor = 80.0;
+        $rating['blueatk_delta'] = $kFactor[$match['blueatk']] * $gainBlue;
+        $rating['bluedef_delta'] = $kFactor[$match['bluedef']] * $gainBlue;
+        $rating['redatk_delta']  = $kFactor[$match['redatk']]  * $gainRed;
+        $rating['reddef_delta']  = $kFactor[$match['reddef']]  * $gainRed;
 
-        $rating['blueatk_delta'] = $kFactor * $gainBlue;
-        $rating['bluedef_delta'] = $kFactor * $gainBlue;
-        $rating['redatk_delta']  = $kFactor * $gainRed;
-        $rating['reddef_delta']  = $kFactor * $gainRed;
-
-        $players[$match['blueatk']]['atk_rating'] += $kFactor * $gainBlue;
-        $players[$match['bluedef']]['def_rating'] += $kFactor * $gainBlue;
-        $players[$match['redatk']]['atk_rating']  += $kFactor * $gainRed;
-        $players[$match['reddef']]['def_rating']  += $kFactor * $gainRed;
+        $players[$match['blueatk']]['atk_rating'] += $kFactor[$match['blueatk']] * $gainBlue;
+        $players[$match['bluedef']]['def_rating'] += $kFactor[$match['bluedef']] * $gainBlue;
+        $players[$match['redatk']]['atk_rating']  += $kFactor[$match['redatk']]  * $gainRed;
+        $players[$match['reddef']]['def_rating']  += $kFactor[$match['reddef']]  * $gainRed;
     }
 
     $affectedrows = $pdo->exec("DELETE FROM match_ratings");

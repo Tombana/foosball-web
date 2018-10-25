@@ -91,7 +91,7 @@ $q = $pdo->query('SELECT bluedef,blueatk,redatk,reddef,scoreblue,scorered,time,d
     bluedef_rating,bluedef_delta,blueatk_rating,blueatk_delta,
     redatk_rating,redatk_delta,reddef_rating,reddef_delta
     FROM matches INNER JOIN match_ratings ON matches.id = match_ratings.match_id
-    ORDER BY id DESC LIMIT 10');
+    ORDER BY id DESC LIMIT 20');
 
 function printElo($value, $delta) {
     if ($delta >= 0)
