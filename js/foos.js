@@ -168,7 +168,7 @@ function set_player(position, player_id) {
 
 function eloToPoints(eloValue) {
     if( eloValue < 0.5) {
-        return Math.round(eloValue * 20.0);
+        return Math.round(eloValue/(1-eloValue) * 10.0);
     }
     return 10;
 }
