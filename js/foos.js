@@ -6,6 +6,8 @@ function startup() {
     $("#swapblue").click(swap_blue);
     $("#swapred").click(swap_red);
 
+    $("#balanceteams").click(balance_teams);
+
     $('#bluedef').change( function() { set_player('bluedef', $('#bluedef').val()); elo_prediction(); } );
     $('#blueatk').change( function() { set_player('blueatk', $('#blueatk').val()); elo_prediction(); } );
     $('#redatk').change(  function() { set_player('redatk',  $('#redatk').val()); elo_prediction(); } );
@@ -154,6 +156,69 @@ function swap_red() {
     $('#reddef').val(a3);
     set_player('redatk', a4);
     set_player('reddef', a3);
+    elo_prediction();
+}
+
+
+// https://stackoverflow.com/a/20871714/9978001
+const permutator = (inputArr) => {
+    let result = [];
+
+    const permute = (arr, m = []) => {
+        if (arr.length === 0) {
+            result.push(m)
+        } else {
+            for (let i = 0; i < arr.length; i++) {
+                let curr = arr.slice();
+                let next = curr.splice(i, 1);
+                permute(curr.slice(), m.concat(next))
+            }
+        }
+    }
+
+    permute(inputArr)
+
+    return result;
+}
+
+
+function balance_teams(){
+    // We're doing too much work. Will get 24 permutations while there are only 12 unique combos
+    var ids = [$('#bluedef').val(), $('#blueatk').val(), $('#redatk').val(), $('#reddef').val()];
+    var atkratings =  {[ids[0]] : $('#bluedef').find(':selected').data('atkrating'),
+                       [ids[1]] : $('#blueatk').find(':selected').data('atkrating'),
+                       [ids[2]] : $('#redatk').find(':selected').data('atkrating'),
+                       [ids[3]] : $('#reddef').find(':selected').data('atkrating')};
+    var defratings = {[ids[0]] : $('#bluedef').find(':selected').data('defrating'),
+                      [ids[1]] : $('#blueatk').find(':selected').data('defrating'),
+                      [ids[2]] : $('#redatk').find(':selected').data('defrating'),
+                      [ids[3]] : $('#reddef').find(':selected').data('defrating')}
+
+    var perms = permutator(ids); 
+    var smallestDifference = 2;
+    for (i in perms){
+        var perm = perms[i];
+        var blueElo  = 0.565 * defratings[perm[0]]  + 0.435 * atkratings[perm[1]];
+        var redElo  = 0.565 * defratings[perm[3]]  + 0.435 * atkratings[perm[2]];
+
+        var blueValue = 1.0 / (1.0 + Math.pow(10, (redElo - blueElo) / 400.0));
+        var redValue = 1.0 - blueValue;
+
+        if(Math.abs(blueValue - redValue) < smallestDifference){
+            smallestDifference = Math.abs(blueValue - redValue);
+            ids = perm;
+        }
+    }
+
+    $('#bluedef').val(ids[0]);
+    $('#blueatk').val(ids[1]);
+    $('#redatk').val(ids[2]);
+    $('#reddef').val(ids[3]);
+
+    set_player('bluedef', ids[0]);
+    set_player('blueatk', ids[1]);
+    set_player('redatk',  ids[2]);
+    set_player('reddef',  ids[3]);
     elo_prediction();
 }
 
