@@ -138,7 +138,7 @@ function decreaseScoreRed() {
 }
 
 function endgame(){
-    $('#message').html("Uploading result in 2 seconds...");
+    $('#message').html("Uploading result in 4 seconds...");
     setTimeout(function() {
         // Check if the user did not change the score back!
         if ((blueScore < 10 && redScore < 10) || Math.abs(blueScore - redScore) < 2) {
@@ -159,7 +159,7 @@ function endgame(){
                 window.location.href="index.html";
             }, 1000);
         }
-    }, 2000);
+    }, 4000);
 }
 
 $(document).ready(startup)
