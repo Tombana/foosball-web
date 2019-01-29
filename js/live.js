@@ -64,6 +64,26 @@ function startup() {
             if (event.data == "SAVE") { // Save by defense
                 randomChoice( [sounds.nicecatch , sounds.narrowlyaverted] ).play();
             }
+            var parts = event.data.split(' ');
+            if (parts[0] == "SCOREDBY") {
+                var playerIdx = parseInt(parts[1]);
+                var idxToName = [
+                    "[unknown]",
+                    "Blue keeper",
+                    "Blue defender",
+                    "Red attacker",
+                    "Blue middle",
+                    "Red middle",
+                    "Blue attacker",
+                    "Red defender",
+                    "Red keeper" ];
+                if (playerIdx >= 0 && playerIdx <= 8) {
+                    $('#message2').html("Last goal scored by: " + idxToName[playerIdx]);
+                    setTimeout(function() {
+                        $('#message2').html("");
+                    }, 5000);
+                }
+            }
         }
     );
 
@@ -138,12 +158,17 @@ function decreaseScoreRed() {
 }
 
 function endgame(){
-    $('#message').html("Uploading result in 4 seconds...");
+    $('#message').html("Uploading result in 5 seconds...");
     setTimeout(function() {
         // Check if the user did not change the score back!
         if ((blueScore < 10 && redScore < 10) || Math.abs(blueScore - redScore) < 2) {
             $('#message').html("Upload cancelled!");
+            // Remove message after a few seconds
+            setTimeout(function() {
+                $('#message').html("");
+            }, 1000);
         } else {
+            $('#message').html("Uploading...");
             var dateE = new Date();
             var end_time = dateE.getTime();
             var result = {};
@@ -154,12 +179,11 @@ function endgame(){
             result["end"] = Math.floor(end_time/1000);// time in SECONDS
             var res = $.ajax('api/set_result.php',{ data: JSON.stringify(result),
                 contentType : 'application/json', type:'POST', async: false});
-            $('#message').html("Uploading...");
             setTimeout(function() {
                 window.location.href="index.html";
             }, 1000);
         }
-    }, 4000);
+    }, 5000);
 }
 
 $(document).ready(startup)
