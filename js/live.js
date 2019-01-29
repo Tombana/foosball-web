@@ -8,7 +8,27 @@ function randomChoice(arr) {
     return arr[Math.floor(arr.length * Math.random())];
 }
 
+var lastMessageIndex;
+
+// Show a message. If timeout = 0 then its shown indefinitely
+function showMessage(msg, timeout) {
+    lastMessageIndex += 1;
+    $('#message').html(msg);
+    if (timeout > 0) {
+        var curIndex = lastMessageIndex;
+        setTimeout(function() {
+            // If another message pops up in the mean time,
+            // then do not overwrite it!!
+            if (curIndex == lastMessageIndex) {
+                $('#message').html("");
+            }
+        }, timeout);
+    }
+}
+
 function startup() {
+    lastMessageIndex = 0;
+
     // Load player names
     $.getJSON( 'api/get_players.php', function( data ) {
         $('#blueatk').html(data['blueatk']);
@@ -78,10 +98,7 @@ function startup() {
                     "Red defender",
                     "Red keeper" ];
                 if (playerIdx >= 0 && playerIdx <= 8) {
-                    $('#message2').html("Last goal scored by: " + idxToName[playerIdx]);
-                    setTimeout(function() {
-                        $('#message2').html("");
-                    }, 5000);
+                    showMessage("Last goal scored by: " + idxToName[playerIdx], 8000);
                 }
             }
         }
@@ -158,17 +175,13 @@ function decreaseScoreRed() {
 }
 
 function endgame(){
-    $('#message').html("Uploading result in 5 seconds...");
+    showMessage("Uploading result in 5 seconds...", 5000);
     setTimeout(function() {
         // Check if the user did not change the score back!
         if ((blueScore < 10 && redScore < 10) || Math.abs(blueScore - redScore) < 2) {
-            $('#message').html("Upload cancelled!");
-            // Remove message after a few seconds
-            setTimeout(function() {
-                $('#message').html("");
-            }, 1000);
+            showMessage("Upload cancelled!", 1000);
         } else {
-            $('#message').html("Uploading...");
+            showMessage("Uploading...", 0);
             var dateE = new Date();
             var end_time = dateE.getTime();
             var result = {};
