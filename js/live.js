@@ -67,6 +67,7 @@ function startup() {
             2000);
         },
         function (e) { // onError
+            showMessage("Balltracker not found.", 0);
             console.log("Could not connct to balltracker! Error information:");
             console.log(e);
         },
@@ -98,7 +99,7 @@ function startup() {
                     "Red defender",
                     "Red keeper" ];
                 if (playerIdx >= 0 && playerIdx <= 8) {
-                    showMessage("Last goal scored by: " + idxToName[playerIdx], 8000);
+                    showMessage("Goal by: " + idxToName[playerIdx], 10000);
                 }
             }
         }
