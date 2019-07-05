@@ -138,6 +138,9 @@ $(document).bind('keydown',function(e){
     if(e.keyCode == 77) {
         decreaseScoreRed();
     }
+    if(e.keyCode == 82) {
+        showReplay();
+    }
 });
 
 function increaseScoreBlue() {
