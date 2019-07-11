@@ -279,9 +279,6 @@ function matchStart (params, data) {
     if($.trim(params.term) === '') {
         return data;
     }
-    console.log(params);
-    console.log(data);
-    console.log(data.text);
     if (data.text.toUpperCase().indexOf(params.term.toUpperCase()) == 0) {
         return data;
     }
