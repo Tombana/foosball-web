@@ -1,4 +1,5 @@
 function startup() {
+
     $(".season-selector").click(select_season);
 
     $("#swapteams1").click(swap_teams);
@@ -7,6 +8,12 @@ function startup() {
     $("#swapred").click(swap_red);
 
     $("#balanceteams").click(balance_teams);
+
+    $("#lockbluedef").click(toggle_lock);
+    $("#lockblueatk").click(toggle_lock);
+    $("#lockreddef").click(toggle_lock);
+    $("#lockredatk").click(toggle_lock);
+
 
     $('#bluedef').change( function() { set_player('bluedef', $('#bluedef').val()); elo_prediction(); } );
     $('#blueatk').change( function() { set_player('blueatk', $('#blueatk').val()); elo_prediction(); } );
@@ -81,6 +88,8 @@ function startup() {
 
     load_season_section(default_season_id);
 
+    $('.playerselect').select2({matcher: matchStart});
+
     charts_loaded = false;
     google.charts.load('current', {'packages':['corechart']});
     google.charts.setOnLoadCallback(function(){ charts_loaded = true; });
@@ -88,6 +97,15 @@ function startup() {
 
 function select_season() {
     alert('Not implemented yet!');
+}
+
+function toggle_lock(){
+    if($(this).hasClass("fa-lock-open")){ // lock is open and we're gonna close it
+        $(this).attr("class", "fas fa-lock");
+    }
+    else{ // lock is closed and we're gonna open it
+        $(this).attr("class", "fas fa-lock-open");
+    }
 }
 
 function load_season_section(season_id) {
@@ -130,21 +148,18 @@ function swap_teams() {
     var a2 = $('#blueatk').val();
     var a3 = $('#redatk').val();
     var a4 = $('#reddef').val();
-    $('#bluedef').val(a4);
-    $('#blueatk').val(a3);
-    $('#redatk').val(a2);
-    $('#reddef').val(a1);
+
     set_player('bluedef', a4);
     set_player('blueatk', a3);
     set_player('redatk',  a2);
     set_player('reddef',  a1);
+
     elo_prediction();
 }
 function swap_blue() {
     var a1 = $('#bluedef').val();
     var a2 = $('#blueatk').val();
-    $('#bluedef').val(a2);
-    $('#blueatk').val(a1);
+
     set_player('bluedef', a2);
     set_player('blueatk', a1);
     elo_prediction();
@@ -152,8 +167,7 @@ function swap_blue() {
 function swap_red() {
     var a3 = $('#redatk').val();
     var a4 = $('#reddef').val();
-    $('#redatk').val(a4);
-    $('#reddef').val(a3);
+
     set_player('redatk', a4);
     set_player('reddef', a3);
     elo_prediction();
@@ -205,15 +219,24 @@ function balance_teams(){
         var redValue = 1.0 - blueValue;
 
         if(Math.abs(blueValue - redValue) < smallestDifference){
-            smallestDifference = Math.abs(blueValue - redValue);
-            ids = perm;
+
+            // Check if this combination is possible with the locks
+            var possible = true;
+            var pos = ["bluedef", "blueatk", "redatk", "reddef"];
+            for(j in pos){
+                if($("#lock".concat(pos[j])).hasClass("fa-lock") && perm[j] != $("#".concat(pos[j])).val()){
+                    possible = false;
+                    break;
+                }
+            }
+
+
+            if(possible){
+                smallestDifference = Math.abs(blueValue - redValue);
+                ids = perm;
+            }
         }
     }
-
-    $('#bluedef').val(ids[0]);
-    $('#blueatk').val(ids[1]);
-    $('#redatk').val(ids[2]);
-    $('#reddef').val(ids[3]);
 
     set_player('bluedef', ids[0]);
     set_player('blueatk', ids[1]);
@@ -223,6 +246,8 @@ function balance_teams(){
 }
 
 function set_player(position, player_id) {
+    $('#'.concat(position)).val(player_id).trigger('change.select2');
+
     $.getJSON("api/set_players.php?" + position + "=" + player_id, function (data) {
         if (data['affectedrows'] != 1) {
             console.log("Warning: api/set_players.php?" + position + "=" + player_id + " returned: ");
@@ -247,6 +272,18 @@ function elo_prediction() {
 
     $('#blueprediction').html("" + (Math.round(100.0 * blueValue)/100.0) + " (" + eloToPoints(blueValue) + " pts)");
     $( '#redprediction').html("" + (Math.round(100.0 *  redValue)/100.0) + " (" + eloToPoints( redValue) + " pts)");
+}
+
+// https://select2.org/searching
+function matchStart (params, data) {
+    if($.trim(params.term) === '') {
+        return data;
+    }
+    if (data.text.toUpperCase().indexOf(params.term.toUpperCase()) == 0) {
+        return data;
+    }
+
+    return null;
 }
 
 $(document).ready(startup)
