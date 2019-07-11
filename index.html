@@ -49,28 +49,35 @@
             <table class="table table-sm">
               <tr>
                 <th class="text-left"><span class="blueteam">Blue</span> <span id="blueprediction"></span></th>
+                <th class="d-none d-md-table-cell"></th>
                 <th class="d-none d-md-table-cell" colspan="3" style="text-align:center"><a class="btn btn-outline-secondary" role="button" id="swapteams1"><span class="fa fa-arrows-alt-h" aria-hidden="true"></span></a>
                <a class="btn btn-outline-secondary" role="button" id="balanceteams"><span class="fas fa-balance-scale" aria-hidden="true"></span></a> </th>
-                <th class="d-md-none" style="text-align:center"><a class="btn btn-outline-secondary" role="button" id="swapteams2"><span class="fa fa-arrows-alt-h" aria-hidden="true"></span></a></th>
+                <th class="d-none d-md-table-cell"></th>
                 <th class="text-right"><span id="redprediction"></span> <span class="redteam">Red</span></th>
               </tr>
               <tr>
-                <td class="text-left"> <select class="playerselect" id="bluedef"><option>loading...</option></select></td>
+                <td class="text-left"> <select class="playerselect js-example-basic-single" id="bluedef"><option>loading...</option></select></td>
+                <td class="text-left d-none d-md-table-cell"><i id="lockbluedef" class="fas fa-lock-open" data-locked="0"></i></td>
                 <td class="text-left d-none d-md-table-cell"><span class="blueteam fa fa-shield-alt"></span></td>
                 <td rowspan="3" style="text-align:center;padding-left:0px;padding-right:0px;padding-top:20px;"><img style="width:90px;" src="img/foosball_table.png"/></td>
                 <td class="text-right d-none d-md-table-cell"><span class="redteam fa fa-crosshairs"></span></td>
+                <td class="text-right d-none d-md-table-cell"><i id="lockredatk" class="fas fa-lock-open" data-locked="0"></i></td>
                 <td class="text-right"><select class="playerselect" id="redatk"><option>loading...</option></select></td>
               </tr>
               <tr>
                 <td class="text-left"><a class="btn btn-light" role="button" id="swapblue"><span class="fa fa-arrows-alt-v" aria-hidden="true"></span></a></td>
                 <td class="d-none d-md-table-cell"></td>
                 <td class="d-none d-md-table-cell"></td>
+                <td class="d-none d-md-table-cell"></td>
+                <td class="d-none d-md-table-cell"></td>
                 <td class="text-right"><a class="btn btn-light" role="button" id="swapred"><span class="fa fa-arrows-alt-v" aria-hidden="true"></span></a></td>
               </tr>
               <tr>
                 <td class="text-left"> <select class="playerselect" id="blueatk"><option>loading...</option></select></td>
+                <td class="text-left d-none d-md-table-cell"><i id="lockblueatk" class="fas fa-lock-open" data-locked="0"></i></td>
                 <td class="text-left d-none d-md-table-cell"> <span class="blueteam fa fa-crosshairs"></span></td>
                 <td class="text-right d-none d-md-table-cell"><span class="redteam fa fa-shield-alt"> </span></td>
+                <td class="text-right d-none d-md-table-cell"><i id="lockreddef" class="fas fa-lock-open" data-locked="0"></i></td>
                 <td class="text-right"><select class="playerselect" id="reddef"><option>loading...</option></select></td>
               </tr>
               <tr id="btnstartgame">
@@ -226,6 +233,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
     <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js"></script>
     <script src="js/balltracker.js"></script>
     <script src="js/foos.js"></script>
 
