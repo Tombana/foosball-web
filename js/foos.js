@@ -1,3 +1,4 @@
+
 function startup() {
 
     $(".season-selector").click(select_season);
@@ -6,13 +7,15 @@ function startup() {
     $("#swapteams2").click(swap_teams);
     $("#swapblue").click(swap_blue);
     $("#swapred").click(swap_red);
+    $(".swapdefence").click(swap_defence);
+    $(".swapattack").click(swap_attack);
 
     $("#balanceteams").click(balance_teams);
 
-    $("#lockbluedef").click(toggle_lock);
-    $("#lockblueatk").click(toggle_lock);
-    $("#lockreddef").click(toggle_lock);
-    $("#lockredatk").click(toggle_lock);
+    $("#lockbluedef").click(toggle_lock("blue"));
+    $("#lockblueatk").click(toggle_lock("blue"));
+    $("#lockreddef").click(toggle_lock("red"));
+    $("#lockredatk").click(toggle_lock("red"));
 
 
     $('#bluedef').change( function() { set_player('bluedef', $('#bluedef').val()); elo_prediction(); } );
@@ -99,12 +102,17 @@ function select_season() {
     alert('Not implemented yet!');
 }
 
-function toggle_lock(){
-    if($(this).hasClass("fa-lock-open")){ // lock is open and we're gonna close it
-        $(this).attr("class", "fas fa-lock");
-    }
-    else{ // lock is closed and we're gonna open it
-        $(this).attr("class", "fas fa-lock-open");
+function toggle_lock(color){
+    return function(){
+        if($(this).hasClass("fa-lock-open")){ // lock is open and we're gonna close it
+            $(this).attr("class", "fas fa-lock");
+        }
+        else if($(this).hasClass(color.concat("team"))){
+            $(this).attr("class", "fas fa-lock-open");
+        }
+        else{
+            $(this).attr("class", "fas fa-lock ".concat(color).concat("team"));
+        }
     }
 }
 
@@ -173,6 +181,24 @@ function swap_red() {
     elo_prediction();
 }
 
+function swap_defence() {
+    var a1 = $('#bluedef').val();
+    var a4 = $('#reddef').val();
+
+    set_player('bluedef', a4);
+    set_player('reddef', a1);
+    elo_prediction();
+}
+
+function swap_attack() {
+    var a2 = $('#blueatk').val();
+    var a3 = $('#redatk').val();
+
+    set_player('blueatk', a3);
+    set_player('redatk', a2);
+    elo_prediction();
+}
+
 
 // https://stackoverflow.com/a/20871714/9978001
 const permutator = (inputArr) => {
@@ -195,9 +221,7 @@ const permutator = (inputArr) => {
     return result;
 }
 
-
 function balance_teams(){
-    // We're doing too much work. Will get 24 permutations while there are only 12 unique combos
     var ids = [$('#bluedef').val(), $('#blueatk').val(), $('#redatk').val(), $('#reddef').val()];
     var atkratings =  {[ids[0]] : $('#bluedef').find(':selected').data('atkrating'),
                        [ids[1]] : $('#blueatk').find(':selected').data('atkrating'),
@@ -209,6 +233,24 @@ function balance_teams(){
                       [ids[3]] : $('#reddef').find(':selected').data('defrating')}
 
     var perms = permutator(ids); 
+
+    // filter permutations not satisfying locking contraints
+    perms = perms.filter(function(elt){
+        var pos = ["#lockbluedef", "#lockblueatk", "#lockredatk", "#lockreddef"];
+        for(i in pos){
+            if($(pos[i]).hasClass("fa-lock")){
+                var team = pos[i].search("red") > -1 ? "redteam" : "blueteam";
+                if($(pos[i]).hasClass(team)){
+                    if(elt[i] != ids[i]) return false;
+                }
+                else{ // if index i is a defence then 3-i is also defence, same for attack
+                    if(!(elt[i] == ids[i] || elt[3-i] == ids[i])) return false;
+                }
+            }
+        }
+        return true;
+    });
+
     var smallestDifference = 2;
     for (i in perms){
         var perm = perms[i];
@@ -219,22 +261,8 @@ function balance_teams(){
         var redValue = 1.0 - blueValue;
 
         if(Math.abs(blueValue - redValue) < smallestDifference){
-
-            // Check if this combination is possible with the locks
-            var possible = true;
-            var pos = ["bluedef", "blueatk", "redatk", "reddef"];
-            for(j in pos){
-                if($("#lock".concat(pos[j])).hasClass("fa-lock") && perm[j] != $("#".concat(pos[j])).val()){
-                    possible = false;
-                    break;
-                }
-            }
-
-
-            if(possible){
-                smallestDifference = Math.abs(blueValue - redValue);
-                ids = perm;
-            }
+            smallestDifference = Math.abs(blueValue - redValue);
+            ids = perm;
         }
     }
 
@@ -242,6 +270,13 @@ function balance_teams(){
     set_player('blueatk', ids[1]);
     set_player('redatk',  ids[2]);
     set_player('reddef',  ids[3]);
+
+    // reset locks
+    var pos = ["#lockbluedef", "#lockblueatk", "#lockredatk", "#lockreddef"];
+    for(i in pos){
+        $(pos[i]).attr("class", "fas fa-lock-open");
+    }
+
     elo_prediction();
 }
 
@@ -287,3 +322,5 @@ function matchStart (params, data) {
 }
 
 $(document).ready(startup)
+
+
