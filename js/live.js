@@ -26,6 +26,10 @@ function showMessage(msg, timeout) {
     }
 }
 
+function showSpeed(speed) {
+    $('#ballspeed').html(speed);
+}
+
 function startup() {
     lastMessageIndex = 0;
 
@@ -101,6 +105,9 @@ function startup() {
                 if (playerIdx >= 0 && playerIdx <= 8) {
                     showMessage("Goal by: " + idxToName[playerIdx], 10000);
                 }
+            } else if (parts[0] == "MAXSPEED") {
+                var speed = parseFloat(parts[1]);
+                showSpeed(speed);
             }
         }
     );

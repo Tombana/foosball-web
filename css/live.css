@@ -88,7 +88,12 @@
     border: none;
 }
 
-
+.speedtable {
+    font-size: 25px;
+    text-align: center;
+    background-color: #fff;
+    border-radius: 8px;
+}
 .nametable {
     font-size: 30px;
     text-align: center;
