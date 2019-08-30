@@ -161,6 +161,9 @@ $(document).bind('keydown',function(e){
         redScore++;
         updateScore();
     }
+    if(e.keyCode == 86) { // v
+        $('.speedtable').toggle();
+    }
 });
 
 function increaseScoreBlue() {
@@ -190,7 +193,7 @@ function decreaseScoreRed() {
     updateScore();
 }
 
-function endgame(){
+function endgame() {
     showMessage("Uploading result in 5 seconds...", 5000);
     setTimeout(function() {
         // Check if the user did not change the score back!
