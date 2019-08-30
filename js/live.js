@@ -97,8 +97,6 @@ function startup() {
                     "Red keeper" ];
                 if (playerIdx >= 0 && playerIdx <= 8) {
                     showMessage("Goal by: " + idxToName[playerIdx], 10000);
-                } else {
-                    showMessage("Goal by unknown player");
                 }
             }
             if (parts[0] == "FAST") { // Fast ball ?
