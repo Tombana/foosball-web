@@ -77,20 +77,13 @@ function startup() {
         },
         function (event) { // onMessage
             console.log("Message from balltracker: " + event.data);
-            if (event.data == "BG") { // Blue Goal
-                increaseScoreBlue();
-            }
-            if (event.data == "RG") { // Red Goal
-                increaseScoreRed();
-            }
-            if (event.data == "FAST") { // Fast ball ?
-                sounds.woopwoop.play();
-            }
-            if (event.data == "SAVE") { // Save by defense
-                randomChoice( [sounds.nicecatch , sounds.narrowlyaverted] ).play();
-            }
             var parts = event.data.split(' ');
-            if (parts[0] == "SCOREDBY") {
+            if (parts[0] == "BG" || parts[0] == "RG") { // Goal
+                if (parts[0] == "BG") { // Blue Goal
+                    increaseScoreBlue();
+                } else {
+                    increaseScoreRed();
+                }
                 var playerIdx = parseInt(parts[1]);
                 var idxToName = [
                     "[unknown]",
@@ -104,8 +97,17 @@ function startup() {
                     "Red keeper" ];
                 if (playerIdx >= 0 && playerIdx <= 8) {
                     showMessage("Goal by: " + idxToName[playerIdx], 10000);
+                } else {
+                    showMessage("Goal by unknown player");
                 }
-            } else if (parts[0] == "MAXSPEED") {
+            }
+            if (parts[0] == "FAST") { // Fast ball ?
+                sounds.woopwoop.play();
+            }
+            if (parts[0] == "SAVE") { // Save by defense
+                randomChoice( [sounds.nicecatch , sounds.narrowlyaverted] ).play();
+            }
+            if (parts[0] == "MAXSPEED") {
                 var speed = parseFloat(parts[1]);
                 showSpeed(speed);
             }
