@@ -129,24 +129,37 @@ function startup() {
 function updateScore() {
     $('#scoreblue').html(blueScore);
     $('#scorered').html(redScore);
+
+
+    if ((blueScore >= 10 || redScore >= 10) && Math.abs(blueScore - redScore) >= 2) {
+        endgame();
+    }
 }
 
 $(document).bind('keydown',function(e){
     // Keycodes: https://css-tricks.com/snippets/javascript/javascript-keycodes/
-    if(e.keyCode == 65) {
+    if(e.keyCode == 65) { // a
         increaseScoreBlue();
     }
-    if(e.keyCode == 75) {
+    if(e.keyCode == 75) { // k
         increaseScoreRed();
     }
-    if(e.keyCode == 90) {
+    if(e.keyCode == 90) { // z
         decreaseScoreBlue();
     }
-    if(e.keyCode == 77) {
+    if(e.keyCode == 77) { // m
         decreaseScoreRed();
     }
-    if(e.keyCode == 82) {
+    if(e.keyCode == 82) { // r
         showReplay();
+    }
+    if(e.keyCode == 81) { // q
+        blueScore++;
+        updateScore();
+    }
+    if(e.keyCode == 79) { // o
+        redScore++;
+        updateScore();
     }
 });
 
@@ -156,10 +169,6 @@ function increaseScoreBlue() {
 
     sounds.bluescores.play();
     showReplay();
-
-    if (blueScore >= 10 && blueScore - redScore >= 2){
-        endgame();
-    }
 }
 
 function increaseScoreRed() {
@@ -168,10 +177,6 @@ function increaseScoreRed() {
 
     sounds.redscores.play();
     showReplay();
-
-    if (redScore >= 10 && redScore - blueScore >= 2){
-        endgame();
-    }
 }
 
 function decreaseScoreBlue() {
